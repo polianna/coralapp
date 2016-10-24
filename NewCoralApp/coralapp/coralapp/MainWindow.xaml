@@ -52,7 +52,7 @@
             </TabItem>
             <TabItem x:Name="tabSearch" Header="Что на складе?" Background="White" FontFamily="Comic Sans MS">
                 <Grid Background="White" Margin="0,12,0,0">
-                    <Button x:Name="bSearchAllProduct" Content="Весь товар на складе" HorizontalAlignment="Left" Height="34" Margin="5,0,0,5" VerticalAlignment="Bottom" Width="298" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
+                    <Button x:Name="bSearchAllProduct" Content="Весь товар на складе" HorizontalAlignment="Left" Height="34" Margin="5,0,0,5" VerticalAlignment="Bottom" Width="298" FontSize="14" Background="#FFC5FFFF" Click="bSearchAllProduct_Click"/>
                     <Button x:Name="bSearchPromoProduct" Content="Акционный товар на складе" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="298" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
                     <TextBox x:Name="tbSearchProductName" HorizontalAlignment="Left" Height="34" Margin="380,0,0,0" TextWrapping="Wrap" Width="116" Text="наименование" FontSize="14" GotFocus="tbSearchProductName_GotFocus" VerticalAlignment="Top" />
                     <Button x:Name="bSearchProduct" Content="Поиск товара" HorizontalAlignment="Left" Height="34" Margin="657,0,0,0" VerticalAlignment="Top" Width="104" FontSize="14" Background="#FFC5FFFF" Click="button_Click"/>

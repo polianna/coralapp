@@ -40,14 +40,7 @@ namespace coralapp
             switch (tabItem)
             {
                 case "tabSearch":
-                    String SQL = "Select * FROM [CurrentLedger]";
-                    
-                    SqlCommand command = new SqlCommand(SQL, this.connection);
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
-                    connection.Open();
-                    DataTable commodityTable = new DataTable();
-                    adapter.Fill(commodityTable);
-                    dgSearch.ItemsSource = commodityTable.DefaultView;
+                    allLedgers();
                     break;
                 default:
                     return;
@@ -87,6 +80,23 @@ namespace coralapp
             adapter.Fill(commodityTable);
             dgSearch.ItemsSource = commodityTable.DefaultView;
 
+        }
+
+        private void allLedgers() {
+            String SQL = "Select * FROM [CurrentLedger]";
+
+            SqlCommand command = new SqlCommand(SQL, this.connection);
+            SqlDataAdapter adapter = new SqlDataAdapter(command);
+            if (connection.State == ConnectionState.Closed)
+            { connection.Open(); }
+            DataTable commodityTable = new DataTable();
+            adapter.Fill(commodityTable);
+            dgSearch.ItemsSource = commodityTable.DefaultView;
+        }
+
+        private void bSearchAllProduct_Click(object sender, RoutedEventArgs e)
+        {
+            allLedgers();
         }
     }
 }
