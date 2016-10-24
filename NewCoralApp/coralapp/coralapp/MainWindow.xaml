@@ -50,7 +50,7 @@
                     <Button x:Name="bNewAddInDB" Content="Добавить в базу данных" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="176" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Что на складе?" Background="White" FontFamily="Comic Sans MS">
+            <TabItem x:Name="tabSearch" Header="Что на складе?" Background="White" FontFamily="Comic Sans MS">
                 <Grid Background="White" Margin="0,12,0,0">
                     <Button x:Name="bSearchAllProduct" Content="Весь товар на складе" HorizontalAlignment="Left" Height="34" Margin="5,0,0,5" VerticalAlignment="Bottom" Width="298" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
                     <Button x:Name="bSearchPromoProduct" Content="Акционный товар на складе" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="298" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
@@ -58,7 +58,12 @@
                     <Button x:Name="bSearchProduct" Content="Поиск товара" HorizontalAlignment="Left" Height="34" Margin="657,0,0,0" VerticalAlignment="Top" Width="104" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
                     <Label x:Name="lSearch1" Content="Для поиска определённого товара на складе введите" HorizontalAlignment="Left" Height="34" Margin="8,-2,0,0" VerticalAlignment="Top" Width="372" FontSize="14" Background="{x:Null}"/>
                     <TextBox x:Name="tbSearchProductCode" HorizontalAlignment="Left" Height="34" Margin="536,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="116" Text="код товара" FontSize="14" GotFocus="tbSearchProductCode_GotFocus"/>
-                    <DataGrid x:Name="dgSearch" Margin="5,40,5,45"/>
+                    <DataGrid x:Name="dgSearch" Margin="5,40,5,45">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding commodityid}" Header="Идентификатор" Width="120"/>
+                            <DataGridTextColumn Binding="{Binding commodityname}" Header="Название товара" Width="125"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                     <Label x:Name="lSearch2" Content="или" HorizontalAlignment="Left" Height="32" Margin="496,0,0,0" VerticalAlignment="Top" Width="36" FontSize="14"/>
                 </Grid>
             </TabItem>

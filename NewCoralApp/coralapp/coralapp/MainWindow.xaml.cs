@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,19 +23,40 @@ namespace coralapp
     /// </summary>
     public partial class MainWindow : Window
     {
+        String connectionString;
+        SqlConnection connection;
+
         public MainWindow()
         {
             InitializeComponent();
+            connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            connection = new SqlConnection(connectionString);
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
 
-        }
+        }       
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            string tabItem = ((sender as TabControl).SelectedItem as TabItem).Name as string;
 
+            switch (tabItem)
+            {
+                case "tabSearch":
+                    String SQL = "Select * FROM [Commodity]";
+                    
+                    SqlCommand command = new SqlCommand(SQL, this.connection);
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    connection.Open();
+                    DataTable commodityTable = new DataTable();
+                    adapter.Fill(commodityTable);
+                    dgSearch.ItemsSource = commodityTable.DefaultView;
+                    break;
+                default:
+                    return;
+            }
         }
         
 
@@ -45,5 +69,6 @@ namespace coralapp
         {
             tbSearchProductCode.Clear();
         }
+        
     }
 }
