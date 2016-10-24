@@ -31,12 +31,7 @@ namespace coralapp
             InitializeComponent();
             connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             connection = new SqlConnection(connectionString);
-        }
-
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }       
+        }   
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -45,7 +40,7 @@ namespace coralapp
             switch (tabItem)
             {
                 case "tabSearch":
-                    String SQL = "Select * FROM [Commodity]";
+                    String SQL = "Select * FROM [CurrentLedger]";
                     
                     SqlCommand command = new SqlCommand(SQL, this.connection);
                     SqlDataAdapter adapter = new SqlDataAdapter(command);
@@ -62,13 +57,36 @@ namespace coralapp
 
         private void tbSearchProductName_GotFocus(object sender, RoutedEventArgs e)
         {
+            if (tbSearchProductName.Text == "наименование")
             tbSearchProductName.Clear();
         }
        
             private void tbSearchProductCode_GotFocus(object sender, RoutedEventArgs e)
         {
-            tbSearchProductCode.Clear();
+            if (tbSearchProductCode.Text == "код товара")
+                tbSearchProductCode.Clear();
         }
+
+        private void dgSearch_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
         
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            String SQL = "Select * FROM [CurrentLedger] where commodity_name like @name or coralclub_id like @code";
+
+            SqlCommand command = new SqlCommand(SQL, this.connection);
+            SqlParameter parName = command.Parameters.Add("@name", SqlDbType.NVarChar, -1);
+            SqlParameter parCode = command.Parameters.Add("@code", SqlDbType.NVarChar, -1);
+            parName.Value = tbSearchProductName.Text;
+            parCode.Value = tbSearchProductCode.Text;
+            command.Prepare();
+            SqlDataAdapter adapter = new SqlDataAdapter(command);
+            DataTable commodityTable = new DataTable();
+            adapter.Fill(commodityTable);
+            dgSearch.ItemsSource = commodityTable.DefaultView;
+
+        }
     }
 }

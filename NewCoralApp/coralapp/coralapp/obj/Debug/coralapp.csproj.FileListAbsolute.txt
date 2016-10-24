@@ -22,7 +22,6 @@ C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debu
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp.csprojResolveAssemblyReference.cache
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\checkin.g.cs
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\MainWindow.g.cs
-C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\Window1.g.cs
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\App.g.cs
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp_MarkupCompile.cache
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp_MarkupCompile.lref
@@ -30,7 +29,8 @@ C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debu
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\coralapp.pdb
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\checkin.baml
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\MainWindow.baml
-C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\Window1.baml
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp.g.resources
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp.Properties.Resources.resources
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp.csproj.GenerateResource.Cache
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\Login.g.cs
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\Login.baml

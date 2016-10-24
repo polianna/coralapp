@@ -55,13 +55,18 @@
                     <Button x:Name="bSearchAllProduct" Content="Весь товар на складе" HorizontalAlignment="Left" Height="34" Margin="5,0,0,5" VerticalAlignment="Bottom" Width="298" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
                     <Button x:Name="bSearchPromoProduct" Content="Акционный товар на складе" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="298" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
                     <TextBox x:Name="tbSearchProductName" HorizontalAlignment="Left" Height="34" Margin="380,0,0,0" TextWrapping="Wrap" Width="116" Text="наименование" FontSize="14" GotFocus="tbSearchProductName_GotFocus" VerticalAlignment="Top" />
-                    <Button x:Name="bSearchProduct" Content="Поиск товара" HorizontalAlignment="Left" Height="34" Margin="657,0,0,0" VerticalAlignment="Top" Width="104" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
+                    <Button x:Name="bSearchProduct" Content="Поиск товара" HorizontalAlignment="Left" Height="34" Margin="657,0,0,0" VerticalAlignment="Top" Width="104" FontSize="14" Background="#FFC5FFFF" Click="button_Click"/>
                     <Label x:Name="lSearch1" Content="Для поиска определённого товара на складе введите" HorizontalAlignment="Left" Height="34" Margin="8,-2,0,0" VerticalAlignment="Top" Width="372" FontSize="14" Background="{x:Null}"/>
                     <TextBox x:Name="tbSearchProductCode" HorizontalAlignment="Left" Height="34" Margin="536,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="116" Text="код товара" FontSize="14" GotFocus="tbSearchProductCode_GotFocus"/>
-                    <DataGrid x:Name="dgSearch" Margin="5,40,5,45">
+                    <DataGrid x:Name="dgSearch" Margin="5,40,5,45" AutoGenerateColumns="False" SelectionChanged="dgSearch_SelectionChanged">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding commodityid}" Header="Идентификатор" Width="120"/>
-                            <DataGridTextColumn Binding="{Binding commodityname}" Header="Название товара" Width="125"/>
+                            <DataGridTextColumn Binding="{Binding commodity_name}" Header="Наименование товара" Width="120"/>
+                            <DataGridTextColumn Binding="{Binding coralclub_id}" Header="Код товара" Width="125"/>
+                            <DataGridTextColumn Binding="{Binding desc}" Header="Описание" Width="125"/>
+                            <DataGridTextColumn Binding="{Binding expiration_date}" Header="Срок годности" Width="125"/>
+                            <DataGridTextColumn Binding="{Binding price_value}" Header="Стоимость (в уе)" Width="125"/>
+                            <DataGridTextColumn Binding="{Binding point_value}" Header="Стоимость (в баллах)" Width="125"/>
+                            <DataGridTextColumn Binding="{Binding quantity}" Header="Количество" Width="125"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <Label x:Name="lSearch2" Content="или" HorizontalAlignment="Left" Height="32" Margin="496,0,0,0" VerticalAlignment="Top" Width="36" FontSize="14"/>
