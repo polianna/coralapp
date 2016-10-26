@@ -76,13 +76,15 @@ namespace coralapp
         private void hellosorry_Click(object sender, EventArgs e)
         {
             if (childForm != null)
-                childForm.Close(); //если форма открыта - закрываем
+            { childForm.Close();
+                childForm = null;
+            }//если форма открыта - закрываем
             OpenChildForm();
         }
  
         private void OpenChildForm() {
                 childForm = new checkin();
-                childForm.Closed += (s, e) => childForm = null; //При закрытии формы обнуляем ссылку
+                 //При закрытии формы обнуляем ссылку
                 childForm.Show();
         }
 
