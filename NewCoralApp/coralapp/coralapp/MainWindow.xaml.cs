@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,7 +27,6 @@ namespace coralapp
     {
         private String connectionString;
         private SqlConnection connection;
-        private ExampleViewModel m_ViewModel;
 
         public MainWindow()
         {
@@ -34,8 +34,7 @@ namespace coralapp
             connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             // Конфиг.менеджер прочитал app.config.  Из массива забрали именноD Default connection. И теперь мы знаем к какой БД идти.
             connection = new SqlConnection(connectionString); //Соединение с базой данных
-            m_ViewModel = new ExampleViewModel();
-            DataContext = m_ViewModel;
+            DataContext = new Commodity();
         }   
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -106,44 +105,42 @@ namespace coralapp
         }
     }
 
-    public class ExampleViewModel : INotifyPropertyChanged
+    public class Commodity : IDataErrorInfo
         
     {
-        private string m_Name = "код товара";
-        public ExampleViewModel()
-        {
 
-        }
+        public string Name { get; set; }
 
-        public string Name
+        public string Error
         {
             get
             {
-                return m_Name;
-            }
-            set
-            {
-                if (String.IsNullOrEmpty(value))
-                {
-                    throw new Exception("Name can not be empty.");
-                }
-                if (m_Name != value)
-                {
-                    m_Name = value;
-                    OnPropertyChanged("Name");
-                }
+                return this[string.Empty];
             }
         }
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
+        public string this[string columnName]
         {
-            if (PropertyChanged != null)
+            get
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+                string result = null;
+                if (columnName == "Name")
+                {
+                    if (string.IsNullOrEmpty(Name))
+                    {
+                        result = "Код не может быть пустым";
+                        return result;
+                    }
+                    string st = @"^[A-Z]{2}[0-9]{1,6}$";
+                    if (!Regex.IsMatch(Name, st))
+                    {
+                        result = "Код не соответствует шаблону XX000000";
+                        return result;
+                    }
+                }
+                return null;
 
+            }
         }
     }
-}
+    }

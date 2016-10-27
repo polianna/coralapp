@@ -7,16 +7,15 @@
         mc:Ignorable="d"
         Title="Склад магазина здорового питания" Background="#FFC5FFFF" ResizeMode="CanResizeWithGrip" Width="800" Height="600">
     <Window.Resources>
-        <Style x:Key="CustomTextBoxTextStyle" TargetType="TextBox">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="True">
-                    <Trigger.Setters>
-                        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self},Path=(Validation.Errors)[0].ErrorContent}"/>
-                        <Setter Property="Background" Value="Red"/>
-                    </Trigger.Setters>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+        <ControlTemplate x:Key="eTemplate">
+            <DockPanel LastChildFill="True">
+                <TextBlock DockPanel.Dock="Right" Foreground="Blue" FontSize="13" Text="{Binding ElementName=adorned,Path=AdornedElement.(Validation.Errors)[0].ErrorContent}" >
+                </TextBlock>
+                <Border BorderBrush="Red" BorderThickness="2">
+                    <AdornedElementPlaceholder x:Name="adorned"/>
+                </Border>
+            </DockPanel>
+        </ControlTemplate>
     </Window.Resources>
     <Grid Margin="6,0,0,-4">
         <Grid.RowDefinitions>
@@ -70,8 +69,24 @@
                     <Button x:Name="bSearchProduct" Content="Поиск товара" HorizontalAlignment="Left" Height="34" Margin="657,0,0,0" VerticalAlignment="Top" Width="104" FontSize="14" Background="#FFC5FFFF" Click="button_Click"/>
                     <Label x:Name="lSearch1" Content="Для поиска определённого товара на складе введите" HorizontalAlignment="Left" Height="34" Margin="8,-2,0,0" VerticalAlignment="Top" Width="372" FontSize="14" Background="{x:Null}"/>
                     <!--<TextBox x:Name="tbSearchProductCode" HorizontalAlignment="Left" Height="34" Margin="536,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="116" Text="код товара" FontSize="14" GotFocus="tbSearchProductCode_GotFocus"/>-->
-                    <TextBox x:Name="tbSearchProductCode" HorizontalAlignment="Left" Height="34" Margin="536,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="116" FontSize="14" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}" 
-             Style="{StaticResource CustomTextBoxTextStyle}"/>
+                    <TextBox x:Name="tbSearchProductCode" HorizontalAlignment="Left" Height="34" Margin="536,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="116" FontSize="14">
+                        <TextBox.Style>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="true">
+                                        <Setter Property="ToolTip"
+                Value="{Binding RelativeSource={RelativeSource Self}, 
+                       Path=(Validation.Errors)[0].ErrorContent}"/>
+                                        <Setter Property="BorderBrush" Value="Red"/>
+                                        <Setter Property="BorderThickness" Value="2"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                        <TextBox.Text>
+                            <Binding Path="Name" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged"/>
+                        </TextBox.Text>
+                    </TextBox>
                     <DataGrid x:Name="dgSearch" Margin="5,40,5,45" AutoGenerateColumns="False" SelectionChanged="dgSearch_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding commodity_name}" Header="Наименование товара" Width="120"/>

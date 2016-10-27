@@ -17,8 +17,9 @@
         <Label x:Name="lDesc" Content="Магазин здорового питания" HorizontalAlignment="Left" Height="53" VerticalAlignment="Top" Width="240" FontFamily="Segoe Script" Margin="10,10,0,0" FontSize="14" Foreground="#FF073234" FontWeight="Bold"/>
         <TextBox x:Name="tbLogin" HorizontalAlignment="Left" Height="34" Margin="141,104,0,0" TextWrapping="Wrap" Text="Логин" VerticalAlignment="Top" Width="179" FontFamily="Comic Sans MS" TextAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" GotFocus="tbLogin_GotFocus"/>
         <!--<TextBox x:Name="tbPassword" HorizontalAlignment="Left" Height="34" Margin="141,143,0,0" TextWrapping="Wrap" Text="Пароль" VerticalAlignment="Top" Width="179" FontFamily="Comic Sans MS" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" GotFocus="tbPassword_GotFocus"/>
-        --><Button x:Name="bLogin" Content="Войти" HorizontalAlignment="Left" Height="32" Margin="141,182,0,0" VerticalAlignment="Top" Width="179" Background="#FFC5FFF1" FontFamily="Comic Sans MS" FontSize="14" Click="bLogin_Click"/>
+        -->
         <PasswordBox x:Name="pbPassword" HorizontalAlignment="Left" Height="34" Margin="141,143,0,0" VerticalAlignment="Top" Width="179" FontFamily="Comic Sans MS" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" Password="Пароль" GotFocus="pbPassword_GotFocus"/>
+        <Button x:Name="bLogin" Content="Войти" HorizontalAlignment="Left" Height="32" Margin="141,182,0,0" VerticalAlignment="Top" Width="179" Background="#FFC5FFF1" FontFamily="Comic Sans MS" FontSize="14" Click="bLogin_Click"/>
         <Button x:Name="hellosorry" Content="Регистрация" HorizontalAlignment="Left" Height="28" Margin="352,245,0,0" VerticalAlignment="Top" Width="106" Background="#FFC5FFFF" FontFamily="Comic Sans MS" FontSize="14" Opacity="0.6" Click="hellosorry_Click"/>
         
 
