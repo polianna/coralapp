@@ -47,7 +47,7 @@
                     <Button x:Name="bSaleAddInDB" Content="Продать" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="156" Click="button_Click" FontSize="14" Background="#FFC5FFFF" HorizontalAlignment="Right"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Новые поступления" Background="White" FontFamily="Comic Sans MS" HorizontalAlignment="Right" Width="135">
+            <TabItem x:Name="tabNew" Header="Новые поступления" Background="White" FontFamily="Comic Sans MS" HorizontalAlignment="Right" Width="135">
                 <Grid Background="White" Margin="0,12,0,0">
                     <Label x:Name="lNewProductName" Content="Наименование" HorizontalAlignment="Left" Height="34" Margin="50,0,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
                     <TextBox x:Name="tbNewProductName" HorizontalAlignment="Left" Height="34" Margin="166,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154"/>
@@ -55,9 +55,15 @@
                     <TextBox x:Name="tbNewProductCode" HorizontalAlignment="Left" Height="34" Margin="420,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="156"/>
                     <Label x:Name="lNewProductQuantity" Content="Количество" HorizontalAlignment="Left" Height="34" Margin="50,38,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
                     <TextBox x:Name="tbNewProductQuantity" HorizontalAlignment="Left" Height="34" Margin="166,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154"/>
-                    <Button x:Name="bNewAddInTable" Content="Добавить" HorizontalAlignment="Left" Height="34" Margin="326,39,0,0" VerticalAlignment="Top" Width="90" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
+                    <Button x:Name="bNewAddInTable" Content="Добавить" HorizontalAlignment="Left" Height="34" Margin="326,39,0,0" VerticalAlignment="Top" Width="90" FontSize="14" Background="#FFC5FFFF" Click="bNewAddInTable_Click"/>
                     <Button x:Name="bNewUploadFromExcel" Content="Загрузить из excel " HorizontalAlignment="Left" Height="34" Margin="420,39,0,0" VerticalAlignment="Top" Width="156" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
-                    <DataGrid x:Name="dgNew" Margin="5,80,5,45"/>
+                    <DataGrid x:Name="dgNew" Margin="5,80,5,45" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding commodity_name}" Header="Наименование товара" Width="250"/>
+                            <DataGridTextColumn Binding="{Binding commodity_code}" Header="Код товара" Width="120"/>
+                            <DataGridTextColumn Binding="{Binding quantity}" Header="Количество товара" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                     <Button x:Name="bNewAddInDB" Content="Добавить в базу данных" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="176" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
                 </Grid>
             </TabItem>
@@ -69,7 +75,7 @@
                     <Button x:Name="bSearchProduct" Content="Поиск товара" HorizontalAlignment="Left" Height="34" Margin="657,0,0,0" VerticalAlignment="Top" Width="104" FontSize="14" Background="#FFC5FFFF" Click="button_Click"/>
                     <Label x:Name="lSearch1" Content="Для поиска определённого товара на складе введите" HorizontalAlignment="Left" Height="34" Margin="8,-2,0,0" VerticalAlignment="Top" Width="372" FontSize="14" Background="{x:Null}"/>
                     <!--<TextBox x:Name="tbSearchProductCode" HorizontalAlignment="Left" Height="34" Margin="536,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="116" Text="код товара" FontSize="14" GotFocus="tbSearchProductCode_GotFocus"/>-->
-                    <TextBox x:Name="tbSearchProductCode" HorizontalAlignment="Left" Height="34" Margin="536,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="116" FontSize="14">
+                    <TextBox x:Name="tbSearchProductCode" HorizontalAlignment="Left" Height="34" Margin="536,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="116" FontSize="14" GotFocus="tbSearchProductCode_GotFocus">
                         <TextBox.Style>
                             <Style TargetType="{x:Type TextBox}">
                                 <Style.Triggers>
@@ -77,8 +83,17 @@
                                         <Setter Property="ToolTip"
                 Value="{Binding RelativeSource={RelativeSource Self}, 
                        Path=(Validation.Errors)[0].ErrorContent}"/>
-                                        <Setter Property="BorderBrush" Value="Red"/>
-                                        <Setter Property="BorderThickness" Value="2"/>
+                                        <Setter Property="Validation.ErrorTemplate">
+                                        <Setter.Value>
+                                            <ControlTemplate x:Name="TextErrorTemplate">
+                                                <DockPanel>
+                                                        <Border BorderBrush="Red" BorderThickness="1">
+                                                            <AdornedElementPlaceholder/>
+                                                        </Border>
+                                                    </DockPanel>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                        </Setter>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>

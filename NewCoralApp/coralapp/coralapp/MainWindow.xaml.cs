@@ -34,7 +34,9 @@ namespace coralapp
             connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             // Конфиг.менеджер прочитал app.config.  Из массива забрали именноD Default connection. И теперь мы знаем к какой БД идти.
             connection = new SqlConnection(connectionString); //Соединение с базой данных
-            DataContext = new Commodity();
+            Commodity commodity = new Commodity();
+            commodity.Name = "код товара";
+            DataContext = commodity;
         }   
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -44,7 +46,7 @@ namespace coralapp
             switch (tabItem)
             {
                 case "tabSearch":
-                    allLedgers();
+                    dgSearch.ItemsSource = allLedgers().DefaultView;
                     break;
                 default:
                     return;
@@ -58,7 +60,7 @@ namespace coralapp
             tbSearchProductName.Clear();
         }
        
-            private void tbSearchProductCode_GotFocus(object sender, RoutedEventArgs e)
+        private void tbSearchProductCode_GotFocus(object sender, RoutedEventArgs e)
         {
             if (tbSearchProductCode.Text == "код товара")
                 tbSearchProductCode.Clear();
@@ -72,7 +74,7 @@ namespace coralapp
         private void button_Click(object sender, RoutedEventArgs e) 
   //Процедура для поиска товара по коду или по названию. 
         {
-            String SQL = "Select * FROM [CurrentLedger] where commodity_name like @name or coralclub_id like @code";
+            String SQL = "Select * FROM [LastLedger] where commodity_name like @name or coralclub_id like @code";
 //Создаем SQL комманду
             SqlCommand command = new SqlCommand(SQL, this.connection);
             SqlParameter parName = command.Parameters.Add("@name", SqlDbType.NVarChar, -1); //Определяем, что это за параметры. Из тип.
@@ -87,8 +89,8 @@ namespace coralapp
 
         }
 
-        private void allLedgers() {
-            String SQL = "Select * FROM [CurrentLedger]";
+        private DataTable allLedgers() {
+            String SQL = "Select * FROM [LastLedger]";
 
             SqlCommand command = new SqlCommand(SQL, this.connection);
             SqlDataAdapter adapter = new SqlDataAdapter(command);
@@ -96,12 +98,20 @@ namespace coralapp
             { connection.Open(); }
             DataTable commodityTable = new DataTable();
             adapter.Fill(commodityTable);
-            dgSearch.ItemsSource = commodityTable.DefaultView;
+            return commodityTable;
         }
 
         private void bSearchAllProduct_Click(object sender, RoutedEventArgs e)
         {
-            allLedgers();
+            dgSearch.ItemsSource = allLedgers().DefaultView;
+        }
+
+        private void bNewAddInTable_Click(object sender, RoutedEventArgs e)
+        {
+            string commodityName = tbNewProductName.Text;
+            string commodityCode = tbNewProductCode.Text;
+            string quantity = tbNewProductQuantity.Text;
+            dgNew.Rows.Add();
         }
     }
 
@@ -126,6 +136,7 @@ namespace coralapp
                 string result = null;
                 if (columnName == "Name")
                 {
+                    if (Name.Equals("код товара")) return null;
                     if (string.IsNullOrEmpty(Name))
                     {
                         result = "Код не может быть пустым";
