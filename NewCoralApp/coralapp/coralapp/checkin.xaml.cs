@@ -32,16 +32,19 @@ namespace coralapp
         }
 
         public string sendit(string ReciverMail, string subject, string message)
+            //Метод для отправки сообщений имейл
         {
             MailMessage msg = new MailMessage();
 
-            msg.From = new MailAddress("coralappamail@gmail.com");
-            msg.To.Add(ReciverMail);
+            msg.From = new MailAddress("coralappamail@gmail.com"); //адрес отправителя сообщения
+            msg.To.Add(ReciverMail); //адрес получателей
             msg.Subject = subject;
             msg.Body = message;
             SmtpClient client = new SmtpClient();
-            client.UseDefaultCredentials = true;
-            client.Host = "smtp.gmail.com";
+            //Smtp - протокол, по которому отправляется почта.  
+            // Создаем клиента, который является промежуточным звеном между нами - coralappmail и сервером адрасатов (админ, руководитель и тд)
+            client.UseDefaultCredentials = true; //Настраиваем, чтобы гуглу все понравилось.
+            client.Host = "smtp.gmail.com"; //
             client.Port = 587;
             client.EnableSsl = true;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
@@ -52,13 +55,13 @@ namespace coralapp
                 client.Send(msg);
                 return "Mail has been successfully sent!";
             }
-            catch (Exception ex)
+            catch (Exception ex) //ловим ошибку
             {
                 return "Fail Has error" + ex.Message;
             }
             finally
             {
-                msg.Dispose();
+                msg.Dispose(); //удаляем объект нашего письма
             }
         }
     }

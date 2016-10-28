@@ -34,3 +34,6 @@ C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debu
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp.csproj.GenerateResource.Cache
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\Login.g.cs
 C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\Login.baml
+C:\Users\DELL\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\coralapp.exe.config
+C:\Users\DELL\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp.exe
+C:\Users\DELL\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp.pdb
