@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
@@ -27,6 +28,7 @@ namespace coralapp
     {
         private String connectionString;
         private SqlConnection connection; //Свойство. Оно описано ниже.
+        private ObservableCollection<Product> newProducts = new ObservableCollection<Product>();
 
         public MainWindow()
         {
@@ -48,6 +50,12 @@ namespace coralapp
                 case "tabSearch":
                     dgSearch.ItemsSource = allLedgers().DefaultView;
                     //Если имя вкладки = "TabSearch", то мы записали внутрь таблицы все товары со склада. 
+                    break;
+                case "tabNew":
+                    dgNew.ItemsSource = this.newProducts;
+                    DataTable priceList = getPriceList();
+                    cbNewProductName.ItemsSource = priceList.DefaultView;
+                    cbNewProductCode.ItemsSource = priceList.DefaultView;
                     break;
                 default:
                     return;
@@ -114,11 +122,111 @@ namespace coralapp
         private void bNewAddInTable_Click(object sender, RoutedEventArgs e)
             //Метод для ???
         {
-            string commodityName = tbNewProductName.Text;
-            string commodityCode = tbNewProductCode.Text;
-            string quantity = tbNewProductQuantity.Text;
-            dgNew.Rows.Add();
+            string commodityName = cbNewProductName.Text;
+            string commodityCode = cbNewProductCode.Text;
+            int quantity = Int32.Parse(tbNewProductQuantity.Text);
+            int priceid = -1;
+
+            if ((cbNewProductCode.SelectedValue == null && commodityCode != String.Empty)
+                || (cbNewProductName.SelectedValue == null && commodityName != String.Empty))
+            {
+                MessageBox.Show("Выбран несуществующий товар");
+                return;
+            }
+
+            if (commodityCode != String.Empty && commodityName != String.Empty) {
+
+                int priceidCode = Int32.Parse((cbNewProductCode.SelectedValue as DataRowView)["price_id"].ToString());
+                int priceidName = Int32.Parse((cbNewProductName.SelectedValue as DataRowView)["price_id"].ToString());
+                if (priceidCode != priceidName)
+                {
+                    MessageBox.Show("Код и наименование товара не соответствуют");
+                    return;
+                }
+                else priceid = priceidCode;
+            }
+            else
+            {
+                if (commodityCode != String.Empty)
+                    priceid = Int32.Parse((cbNewProductCode.SelectedValue as DataRowView)["price_id"].ToString());
+                else
+                {
+                    if (commodityName != String.Empty)
+                    {
+                        priceid = Int32.Parse((cbNewProductName.SelectedValue as DataRowView)["price_id"].ToString());
+                    }
+                    else {
+                        MessageBox.Show("Не выбран ни один товар");
+                        return;
+                    }
+                }
+            }
+            this.newProducts.Add(new Product(commodityName, commodityCode, quantity, priceid));
         }
+
+        private void bNewAddInDB_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Product p in this.newProducts) {
+                
+            }
+
+            this.newProducts.Clear();
+        }
+
+        private DataTable getPriceList() {
+            String SQL = "Select * FROM [ActualPriceList]";
+
+            SqlCommand command = new SqlCommand(SQL, this.connection);
+            SqlDataAdapter adapter = new SqlDataAdapter(command);
+            if (connection.State == ConnectionState.Closed)
+            { connection.Open(); } //Если соединение не открыто еще, то мы его открываем
+            DataTable priceTable = new DataTable();
+            adapter.Fill(priceTable);
+            return priceTable;
+        }
+
+        private void cbNewProductName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            e.Handled = true;
+
+        }
+
+        private void cbNewProductCode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        /*
+private void addNewProductDB() {
+   try
+   {
+       SqlCommand command = new SqlCommand("select pass from [User] where username = @username", this.connection);
+       command.Parameters.Add("username", SqlDbType.NVarChar).Value = tbLogin.Text;
+       connection.Open();
+       SqlDataReader reader = command.ExecuteReader(); //записали в нашу структуру данных полученный список
+
+       // write each record
+       while (reader.Read())
+       {
+           dbPass = reader.GetString(0); //считываем данные из списка
+
+       }
+
+   }
+   catch (Exception ex)
+   {
+       MessageBox.Show(ex.Message);
+   }
+   finally //Тут закрываем наше соединение и очищаем структуру reader (закрываем его и он больше недоступен)
+   {
+       if (reader != null)
+           reader.Close();
+
+       if (connection != null)
+           connection.Close();
+   }
+}
+*/
     }
 
     public class Commodity : IDataErrorInfo
@@ -159,5 +267,20 @@ namespace coralapp
 
             }
         }
+    }
+
+    public class Product {
+        public string name { get; set; }
+        public int quantity { get; set; }
+        public string coralid { get; set; }
+        public int priceid { get; set; }
+
+        public Product(string name, string coralid, int quantity, int priceid) {
+            this.name = name;
+            this.coralid = coralid;
+            this.quantity = quantity;
+            this.priceid = priceid;
+        }
+
     }
     }

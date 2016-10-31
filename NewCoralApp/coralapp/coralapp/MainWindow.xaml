@@ -50,21 +50,21 @@
             <TabItem x:Name="tabNew" Header="Новые поступления" Background="White" FontFamily="Comic Sans MS" HorizontalAlignment="Right" Width="135">
                 <Grid Background="White" Margin="0,12,0,0">
                     <Label x:Name="lNewProductName" Content="Наименование" HorizontalAlignment="Left" Height="34" Margin="50,0,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
-                    <TextBox x:Name="tbNewProductName" HorizontalAlignment="Left" Height="34" Margin="166,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154"/>
+                    <ComboBox x:Name="cbNewProductName" HorizontalAlignment="Left" Height="34" Margin="166,0,0,0" VerticalAlignment="Top" Width="154" TextSearch.TextPath="commodity_name" DisplayMemberPath="commodity_name" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding price_id}" SelectionChanged="cbNewProductName_SelectionChanged" />
                     <Label x:Name="lNewProductCode" Content="Код товара" HorizontalAlignment="Left" Height="34" Margin="326,0,0,0" VerticalAlignment="Top" Width="90" FontSize="14"/>
-                    <TextBox x:Name="tbNewProductCode" HorizontalAlignment="Left" Height="34" Margin="420,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="156"/>
+                    <ComboBox x:Name="cbNewProductCode" HorizontalAlignment="Left" Height="34" Margin="420,0,0,0"  VerticalAlignment="Top" Width="156" TextSearch.TextPath="coralclub_id" DisplayMemberPath="coralclub_id" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding price_id}" SelectionChanged="cbNewProductCode_SelectionChanged" />
                     <Label x:Name="lNewProductQuantity" Content="Количество" HorizontalAlignment="Left" Height="34" Margin="50,38,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
-                    <TextBox x:Name="tbNewProductQuantity" HorizontalAlignment="Left" Height="34" Margin="166,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154"/>
+                    <TextBox x:Name="tbNewProductQuantity" Text="0" HorizontalAlignment="Left" Height="34" Margin="166,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154"/>
                     <Button x:Name="bNewAddInTable" Content="Добавить" HorizontalAlignment="Left" Height="34" Margin="326,39,0,0" VerticalAlignment="Top" Width="90" FontSize="14" Background="#FFC5FFFF" Click="bNewAddInTable_Click"/>
                     <Button x:Name="bNewUploadFromExcel" Content="Загрузить из excel " HorizontalAlignment="Left" Height="34" Margin="420,39,0,0" VerticalAlignment="Top" Width="156" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
                     <DataGrid x:Name="dgNew" Margin="5,80,5,45" AutoGenerateColumns="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding commodity_name}" Header="Наименование товара" Width="250"/>
-                            <DataGridTextColumn Binding="{Binding commodity_code}" Header="Код товара" Width="120"/>
+                            <DataGridTextColumn Binding="{Binding name}" Header="Наименование товара" Width="250"/>
+                            <DataGridTextColumn Binding="{Binding coralid}" Header="Код товара" Width="120"/>
                             <DataGridTextColumn Binding="{Binding quantity}" Header="Количество товара" Width="120"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Button x:Name="bNewAddInDB" Content="Добавить в базу данных" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="176" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
+                    <Button x:Name="bNewAddInDB" Content="Добавить в базу данных" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="176" FontSize="14" Background="#FFC5FFFF" Click="bNewAddInDB_Click"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabSearch" Header="Что на складе?" Background="White" FontFamily="Comic Sans MS">
