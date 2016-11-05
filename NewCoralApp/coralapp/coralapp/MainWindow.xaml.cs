@@ -123,19 +123,14 @@ namespace coralapp
         private void bNewAddInTable_Click(object sender, RoutedEventArgs e)
             //Метод для добавления товара в табличку по нажатии кнопки
         {
-<<<<<<< HEAD
-            string commodityName = cbNewProductName.Text;
-            string commodityCode = cbNewProductCode.Text;
-            string commodityCodeSelected = null;
-            string commodityNameSelected = null;
-            int quantity = Int32.Parse(tbNewProductQuantity.Text);
-            int priceid = -1;
-=======
+
             string commodityName = cbNewProductName.Text; //Переменная для хранения имени товара
             string commodityCode = cbNewProductCode.Text; //Переменная для хранения кода товара
+            string commodityCodeSelected = null;
+            string commodityNameSelected = null;
             int quantity = Int32.Parse(tbNewProductQuantity.Text); //Переменная, хранящая численное значение (количество товара)
             int priceid = -1; //Вспомогательная переменная для добавления товара в БД
->>>>>>> origin/master
+
 
             if ((cbNewProductCode.SelectedValue == null && commodityCode != String.Empty)
                 || (cbNewProductName.SelectedValue == null && commodityName != String.Empty))
@@ -157,29 +152,27 @@ namespace coralapp
                     //То выдаем сообщение об ошибке
                     return;
                 }
-<<<<<<< HEAD
+
                 else
                 {
-                    priceid = priceidCode;
+                    priceid = priceidCode; //иначе присваиваем priceid любой айдишник цены
                     commodityNameSelected = (cbNewProductCode.SelectedValue as DataRowView)["commodity_name"].ToString();
                     commodityCodeSelected = (cbNewProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
-                }
-=======
-                else priceid = priceidCode; //иначе присваиваем priceid любой айдишник цены
->>>>>>> origin/master
+                } 
+
             }
             else
             { //если хотя бы один комбобокс пуст
                 if (commodityCode != String.Empty)
                 {
                     priceid = Int32.Parse((cbNewProductCode.SelectedValue as DataRowView)["price_id"].ToString());
-<<<<<<< HEAD
+
                     commodityNameSelected = (cbNewProductCode.SelectedValue as DataRowView)["commodity_name"].ToString();
                     commodityCodeSelected = (cbNewProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
                 }
-=======
+
                 //то забираем строчечку и присваиваем нашей переменной значение из БД
->>>>>>> origin/master
+
                 else
                 {
                     if (commodityName != String.Empty)
@@ -188,24 +181,16 @@ namespace coralapp
                         commodityNameSelected = (cbNewProductName.SelectedValue as DataRowView)["commodity_name"].ToString();
                         commodityCodeSelected = (cbNewProductName.SelectedValue as DataRowView)["coralclub_id"].ToString();
                     }
-<<<<<<< HEAD
-                    else
-                    {
-=======
+
                     else { //если все пусто, то сообщение об ошибке выводим
->>>>>>> origin/master
                         MessageBox.Show("Не выбран ни один товар");
                         return;
                     }
                 }
             }
-<<<<<<< HEAD
             this.newProducts.Add(new Product(commodityNameSelected,
                 commodityCodeSelected, quantity, priceid));
-=======
-            this.newProducts.Add(new Product(commodityName, commodityCode, quantity, priceid));
             //В майн виндоу создаем коллекцию и добавляем в нее товар (данные мы уже забрали из бд и при вводе) 
->>>>>>> origin/master
         }
 
         private void bNewAddInDB_Click(object sender, RoutedEventArgs e)
