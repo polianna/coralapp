@@ -54,7 +54,7 @@ namespace coralapp
                     break;
                 case "tabNew":
                     dgNew.ItemsSource = this.newProducts;
-                    DataTable priceList = getPriceList();
+                    DataTable priceList = getPriceList(); //Забрали данные из БД. Реализацию см. ниже
                     cbNewProductName.ItemsSource = priceList.DefaultView;
                     cbNewProductCode.ItemsSource = priceList.DefaultView;
                     break;
@@ -121,46 +121,65 @@ namespace coralapp
         }
 
         private void bNewAddInTable_Click(object sender, RoutedEventArgs e)
-            //Метод для ???
+            //Метод для добавления товара в табличку по нажатии кнопки
         {
+<<<<<<< HEAD
             string commodityName = cbNewProductName.Text;
             string commodityCode = cbNewProductCode.Text;
             string commodityCodeSelected = null;
             string commodityNameSelected = null;
             int quantity = Int32.Parse(tbNewProductQuantity.Text);
             int priceid = -1;
+=======
+            string commodityName = cbNewProductName.Text; //Переменная для хранения имени товара
+            string commodityCode = cbNewProductCode.Text; //Переменная для хранения кода товара
+            int quantity = Int32.Parse(tbNewProductQuantity.Text); //Переменная, хранящая численное значение (количество товара)
+            int priceid = -1; //Вспомогательная переменная для добавления товара в БД
+>>>>>>> origin/master
 
             if ((cbNewProductCode.SelectedValue == null && commodityCode != String.Empty)
                 || (cbNewProductName.SelectedValue == null && commodityName != String.Empty))
+                //если хотя бы один комбобокс заполнено, но при этом нет совпадений введенного значения ни с одной записью из списка, то
             {
                 MessageBox.Show("Выбран несуществующий товар");
+                //То выдаем сообщение об ошибке
                 return;
             }
 
             if (commodityCode != String.Empty && commodityName != String.Empty) {
-
+                //Если информация из двух комбобоксов относятся к разным товарам 
+                // (проверка по связанному атрибуту - priceid. оно должно совпадать)
                 int priceidCode = Int32.Parse((cbNewProductCode.SelectedValue as DataRowView)["price_id"].ToString());
                 int priceidName = Int32.Parse((cbNewProductName.SelectedValue as DataRowView)["price_id"].ToString());
                 if (priceidCode != priceidName)
                 {
                     MessageBox.Show("Код и наименование товара не соответствуют");
+                    //То выдаем сообщение об ошибке
                     return;
                 }
+<<<<<<< HEAD
                 else
                 {
                     priceid = priceidCode;
                     commodityNameSelected = (cbNewProductCode.SelectedValue as DataRowView)["commodity_name"].ToString();
                     commodityCodeSelected = (cbNewProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
                 }
+=======
+                else priceid = priceidCode; //иначе присваиваем priceid любой айдишник цены
+>>>>>>> origin/master
             }
             else
-            {
+            { //если хотя бы один комбобокс пуст
                 if (commodityCode != String.Empty)
                 {
                     priceid = Int32.Parse((cbNewProductCode.SelectedValue as DataRowView)["price_id"].ToString());
+<<<<<<< HEAD
                     commodityNameSelected = (cbNewProductCode.SelectedValue as DataRowView)["commodity_name"].ToString();
                     commodityCodeSelected = (cbNewProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
                 }
+=======
+                //то забираем строчечку и присваиваем нашей переменной значение из БД
+>>>>>>> origin/master
                 else
                 {
                     if (commodityName != String.Empty)
@@ -169,15 +188,24 @@ namespace coralapp
                         commodityNameSelected = (cbNewProductName.SelectedValue as DataRowView)["commodity_name"].ToString();
                         commodityCodeSelected = (cbNewProductName.SelectedValue as DataRowView)["coralclub_id"].ToString();
                     }
+<<<<<<< HEAD
                     else
                     {
+=======
+                    else { //если все пусто, то сообщение об ошибке выводим
+>>>>>>> origin/master
                         MessageBox.Show("Не выбран ни один товар");
                         return;
                     }
                 }
             }
+<<<<<<< HEAD
             this.newProducts.Add(new Product(commodityNameSelected,
                 commodityCodeSelected, quantity, priceid));
+=======
+            this.newProducts.Add(new Product(commodityName, commodityCode, quantity, priceid));
+            //В майн виндоу создаем коллекцию и добавляем в нее товар (данные мы уже забрали из бд и при вводе) 
+>>>>>>> origin/master
         }
 
         private void bNewAddInDB_Click(object sender, RoutedEventArgs e)
@@ -196,6 +224,7 @@ namespace coralapp
         }
 
         private DataTable getPriceList() {
+            //
             String SQL = "Select * FROM [ActualPriceList]";
 
             SqlCommand command = new SqlCommand(SQL, this.connection);
@@ -209,7 +238,7 @@ namespace coralapp
 
         private void cbNewProductName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            e.Handled = true;
+            e.Handled = true; //Чтобы не обновлялось ничего больше кроме комбобоксов. Защита от создателей MVS
 
         }
 
@@ -287,12 +316,14 @@ private void addNewSupplyDB(int priceId, int quantity) {
     }
 
     public class Product {
+        //Создали класс с полями, ура, методы. счастье. Спасбо за внимание
         public string name { get; set; }
         public int quantity { get; set; }
         public string coralid { get; set; }
         public int priceid { get; set; }
 
         public Product(string name, string coralid, int quantity, int priceid) {
+            //конструктор
             this.name = name;
             this.coralid = coralid;
             this.quantity = quantity;
