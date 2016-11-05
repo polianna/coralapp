@@ -29,6 +29,7 @@ namespace coralapp
         private String connectionString;
         private SqlConnection connection; //Свойство. Оно описано ниже.
         private ObservableCollection<Product> newProducts = new ObservableCollection<Product>();
+        private ObservableCollection<Product> saleProducts = new ObservableCollection<Product>();
 
         public MainWindow()
         {
@@ -124,6 +125,8 @@ namespace coralapp
         {
             string commodityName = cbNewProductName.Text;
             string commodityCode = cbNewProductCode.Text;
+            string commodityCodeSelected = null;
+            string commodityNameSelected = null;
             int quantity = Int32.Parse(tbNewProductQuantity.Text);
             int priceid = -1;
 
@@ -143,34 +146,53 @@ namespace coralapp
                     MessageBox.Show("Код и наименование товара не соответствуют");
                     return;
                 }
-                else priceid = priceidCode;
+                else
+                {
+                    priceid = priceidCode;
+                    commodityNameSelected = (cbNewProductCode.SelectedValue as DataRowView)["commodity_name"].ToString();
+                    commodityCodeSelected = (cbNewProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
+                }
             }
             else
             {
                 if (commodityCode != String.Empty)
+                {
                     priceid = Int32.Parse((cbNewProductCode.SelectedValue as DataRowView)["price_id"].ToString());
+                    commodityNameSelected = (cbNewProductCode.SelectedValue as DataRowView)["commodity_name"].ToString();
+                    commodityCodeSelected = (cbNewProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
+                }
                 else
                 {
                     if (commodityName != String.Empty)
                     {
                         priceid = Int32.Parse((cbNewProductName.SelectedValue as DataRowView)["price_id"].ToString());
+                        commodityNameSelected = (cbNewProductName.SelectedValue as DataRowView)["commodity_name"].ToString();
+                        commodityCodeSelected = (cbNewProductName.SelectedValue as DataRowView)["coralclub_id"].ToString();
                     }
-                    else {
+                    else
+                    {
                         MessageBox.Show("Не выбран ни один товар");
                         return;
                     }
                 }
             }
-            this.newProducts.Add(new Product(commodityName, commodityCode, quantity, priceid));
+            this.newProducts.Add(new Product(commodityNameSelected,
+                commodityCodeSelected, quantity, priceid));
         }
 
         private void bNewAddInDB_Click(object sender, RoutedEventArgs e)
         {
             foreach (Product p in this.newProducts) {
-                
+                if (p.quantity > 0)
+                {
+                    addNewSupplyDB(p.priceid, p.quantity);
+                }
             }
 
             this.newProducts.Clear();
+            cbNewProductCode.SelectedIndex = -1;
+            cbNewProductName.SelectedIndex = -1;
+            tbNewProductQuantity.Text = "0";
         }
 
         private DataTable getPriceList() {
@@ -196,37 +218,32 @@ namespace coralapp
             e.Handled = true;
         }
 
-        /*
-private void addNewProductDB() {
+        
+private void addNewSupplyDB(int priceId, int quantity) {
    try
    {
-       SqlCommand command = new SqlCommand("select pass from [User] where username = @username", this.connection);
-       command.Parameters.Add("username", SqlDbType.NVarChar).Value = tbLogin.Text;
-       connection.Open();
-       SqlDataReader reader = command.ExecuteReader(); //записали в нашу структуру данных полученный список
+                using (SqlCommand cmd = new SqlCommand("newSupply", this.connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-       // write each record
-       while (reader.Read())
-       {
-           dbPass = reader.GetString(0); //считываем данные из списка
+                    SqlParameter pPriceId = new SqlParameter("@price_id", SqlDbType.Int);
+                    pPriceId.Value = priceId;
 
-       }
+                    SqlParameter pQuantity = new SqlParameter("@quantity", SqlDbType.Int);
+                    pQuantity.Value = quantity;
 
-   }
+                    cmd.Parameters.Add(pPriceId);
+                    cmd.Parameters.Add(pQuantity);
+                    cmd.ExecuteNonQuery();
+                }
+
+            }
    catch (Exception ex)
    {
        MessageBox.Show(ex.Message);
    }
-   finally //Тут закрываем наше соединение и очищаем структуру reader (закрываем его и он больше недоступен)
-   {
-       if (reader != null)
-           reader.Close();
-
-       if (connection != null)
-           connection.Close();
-   }
 }
-*/
+
     }
 
     public class Commodity : IDataErrorInfo
