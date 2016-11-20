@@ -302,6 +302,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
             string commodityNameSelected = null;
             int quantity = Int32.Parse(tbSaleProductQuantity.Text); //Переменная, хранящая численное значение (количество товара)
             int priceid = -1; //Вспомогательная переменная для добавления товара в БД
+            int currentLedger = 0;
 
 
             if ((cbSaleProductCode.SelectedValue == null && commodityCode != String.Empty)
@@ -331,6 +332,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
                     priceid = priceidCode; //иначе присваиваем priceid любой айдишник цены
                     commodityNameSelected = (cbSaleProductName.SelectedValue as DataRowView)["commodity_name"].ToString();
                     commodityCodeSelected = (cbSaleProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
+                    currentLedger = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["quantity"].ToString());
                 }
 
             }
@@ -342,6 +344,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
 
                     commodityNameSelected = (cbSaleProductCode.SelectedValue as DataRowView)["commodity_name"].ToString();
                     commodityCodeSelected = (cbSaleProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
+                    currentLedger = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["quantity"].ToString());
                 }
 
                 //то забираем строчечку и присваиваем нашей переменной значение из БД
@@ -353,6 +356,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
                         priceid = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["price_id"].ToString());
                         commodityNameSelected = (cbSaleProductName.SelectedValue as DataRowView)["commodity_name"].ToString();
                         commodityCodeSelected = (cbSaleProductName.SelectedValue as DataRowView)["coralclub_id"].ToString();
+                        currentLedger = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["quantity"].ToString());
                     }
 
                     else
@@ -362,8 +366,24 @@ private void addNewSupplyDB(int priceId, int quantity) {
                     }
                 }
             }
-            this.saleProducts.Add(new Product(commodityNameSelected,
-                commodityCodeSelected, quantity, priceid));
+            foreach (Product prod in this.saleProducts) {
+                if (priceid == prod.priceid) {
+                    quantity += prod.quantity;
+                    if (currentLedger >= quantity)
+                    {
+                        prod.quantity = quantity;
+                        dgSale.Items.Refresh();
+                    }
+                    else MessageBox.Show("На складе недостаточно товара. Доступное количество - " + currentLedger);
+                    return;
+                }
+            }
+            if (currentLedger >= quantity)
+            {
+                this.saleProducts.Add(new Product(commodityNameSelected,
+                    commodityCodeSelected, quantity, priceid));
+            }
+            else MessageBox.Show("На складе недостаточно товара. Доступное количество - " + currentLedger);
             //В майн виндоу создаем коллекцию и добавляем в нее товар (данные мы уже забрали из бд и при вводе)
         }
 
@@ -440,13 +460,25 @@ private void addNewSupplyDB(int priceId, int quantity) {
         public int quantity { get; set; }
         public string coralid { get; set; }
         public int priceid { get; set; }
+        public int curLedger { get; set; }
 
         public Product(string name, string coralid, int quantity, int priceid) {
-            //конструктор
+            //конструктор первый
             this.name = name;
             this.coralid = coralid;
             this.quantity = quantity;
             this.priceid = priceid;
+            this.curLedger = 0;
+        }
+
+        public Product(string name, string coralid, int quantity, int priceid, int curLedger)
+        {
+            //конструктор второй (расширенный)
+            this.name = name;
+            this.coralid = coralid;
+            this.quantity = quantity;
+            this.priceid = priceid;
+            this.curLedger = curLedger;
         }
 
     }
