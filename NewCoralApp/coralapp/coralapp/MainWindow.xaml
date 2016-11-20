@@ -33,18 +33,24 @@
                     <Border BorderBrush="Black" BorderThickness="1" Height="121" VerticalAlignment="Top" Margin="10,252,20,0"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Продажа товара" Background="White" FontFamily="Comic Sans MS">
+            <TabItem x:Name="tabSale" Header="Продажа товара" Background="White" FontFamily="Comic Sans MS">
                 <Grid Background="White" Margin="0,12,0,0">
                     <Label x:Name="lSaleProductName" Content="Наименование" Height="34" Margin="49,0,0,0" VerticalAlignment="Top" Width="110" FontSize="14" HorizontalAlignment="Left"/>
-                    <ComboBox x:Name="cbSaleProductName" Height="34" Margin="165,0,0,0" VerticalAlignment="Top" Width="154" HorizontalAlignment="Left" TextSearch.TextPath="commodity_name" DisplayMemberPath="commodity_name" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding price_id}"/>
+                    <ComboBox x:Name="cbSaleProductName" Height="34" Margin="165,0,0,0" VerticalAlignment="Top" Width="154" HorizontalAlignment="Left" TextSearch.TextPath="commodity_name" DisplayMemberPath="commodity_name" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding price_id}" SelectionChanged="cbSaleProductName_SelectionChanged"/>
                     <Label x:Name="lSaleProductCode" Content="Код товара" Height="34" Margin="325,0,0,0" VerticalAlignment="Top" Width="90" FontSize="14" HorizontalAlignment="Left"/>
-                    <ComboBox x:Name="tbSaleProductCode" Height="34" Margin="419,0,0,0" VerticalAlignment="Top" Width="156" HorizontalAlignment="Left" TextSearch.TextPath="coralclub_id" DisplayMemberPath="coralclub_id" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding price_id}"/>
+                    <ComboBox x:Name="cbSaleProductCode" Height="34" Margin="419,0,0,0" VerticalAlignment="Top" Width="156" HorizontalAlignment="Left" TextSearch.TextPath="coralclub_id" DisplayMemberPath="coralclub_id" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding price_id}" SelectionChanged="cbSaleProductCode_SelectionChanged"/>
                     <Label x:Name="lSaleProductQuantity" Content="Количество" Height="34" Margin="49,39,0,0" VerticalAlignment="Top" Width="110" FontSize="14" HorizontalAlignment="Left"/>
-                    <TextBox x:Name="cbSaleProductQuantity" Height="34" Margin="165,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154" HorizontalAlignment="Left" Text="0"/>
+                    <TextBox x:Name="tbSaleProductQuantity" Height="34" Margin="165,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154" HorizontalAlignment="Left" Text="0"/>
                     <CheckBox x:Name="cbSalePromo" Content="Акция?" Height="34" Margin="337,39,0,0" VerticalAlignment="Top" Width="78" FontSize="14" HorizontalAlignment="Left"/>
-                    <Button x:Name="bSaleAddInTable" Content="Добавить в корзину" Height="34" Margin="419,39,0,0" VerticalAlignment="Top" Width="156" Click="button_Click" FontSize="14" Background="#FFC5FFFF" HorizontalAlignment="Left"/>
-                    <DataGrid x:Name="dgSale" Margin="5,80,5,45"/>
-                    <Button x:Name="bSaleAddInDB" Content="Продать" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="156" Click="button_Click" FontSize="14" Background="#FFC5FFFF" HorizontalAlignment="Right"/>
+                    <Button x:Name="bSaleAddInTable" Content="Добавить в корзину" Height="34" Margin="419,39,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" HorizontalAlignment="Left" Click="bSaleAddInTable_Click"/>
+                    <DataGrid x:Name="dgSale" Margin="5,80,5,45" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn IsReadOnly = "True" Binding="{Binding name}" Header="Наименование товара" Width="250"/>
+                            <DataGridTextColumn IsReadOnly = "True" Binding="{Binding coralid}" Header="Код товара" Width="120"/>
+                            <DataGridTextColumn Binding="{Binding quantity}" Header="Количество товара" Width="120"/>
+                        </DataGrid.Columns>
+                        </DataGrid>
+                    <Button x:Name="bSaleAddInDB" Content="Продать" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="156" FontSize="14" Background="#FFC5FFFF" HorizontalAlignment="Right" Click="bSaleAddInDB_Click"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabNew" Header="Новые поступления" Background="White" FontFamily="Comic Sans MS" HorizontalAlignment="Right" Width="135">

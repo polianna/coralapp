@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Accord.Statistics.Models.Regression.Linear;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -44,6 +45,11 @@ namespace coralapp
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {//Метод для определения, на какую из вкладок щелкнул пользователь. 
+            if (this.connection == null) {
+                this.connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+                // Забрали строчку. Конфиг.менеджер прочитал app.config.  Из массива забрали именно Default connection. И теперь мы знаем к какой БД идти.
+                this.connection = new SqlConnection(this.connectionString); //Создали соединение с базой данных
+            }
             string tabItem = ((sender as TabControl).SelectedItem as TabItem).Name as string;
             //Взяли имя вкладки и записали в переменную
             switch (tabItem)
@@ -57,6 +63,12 @@ namespace coralapp
                     DataTable priceList = getPriceList(); //Забрали данные из БД. Реализацию см. ниже
                     cbNewProductName.ItemsSource = priceList.DefaultView;
                     cbNewProductCode.ItemsSource = priceList.DefaultView;
+                    break;
+                case "tabSale":
+                    dgSale.ItemsSource = this.saleProducts;
+                    DataTable saleList = getAvailableCommodityList(); //Забрали данные из БД. Реализацию см. ниже
+                    cbSaleProductName.ItemsSource = saleList.DefaultView;
+                    cbSaleProductCode.ItemsSource = saleList.DefaultView;
                     break;
                 default:
                     return;
@@ -87,7 +99,7 @@ namespace coralapp
   //Метод для поиска товара по коду или по названию. 
         {
             String SQL = "Select * FROM [LastLedger] where commodity_name like @name or coralclub_id like @code";
-//Создаем SQL комманду, т.к необходимо понять, что такое @name and @code, для этого
+//Создаем SQL команду, т.к необходимо понять, что такое @name and @code, для этого
             SqlCommand command = new SqlCommand(SQL, this.connection);
             SqlParameter parName = command.Parameters.Add("@name", SqlDbType.NVarChar, -1); //Определяем, что это за параметры. Их тип.
             SqlParameter parCode = command.Parameters.Add("@code", SqlDbType.NVarChar, -1);
@@ -107,7 +119,7 @@ namespace coralapp
 
             SqlCommand command = new SqlCommand(SQL, this.connection);
             SqlDataAdapter adapter = new SqlDataAdapter(command);
-            if (connection.State == ConnectionState.Closed)
+            if (connection.State != ConnectionState.Open)
             { connection.Open(); } //Если соединение не открыто еще, то мы его открываем
             DataTable commodityTable = new DataTable();
             adapter.Fill(commodityTable);
@@ -214,11 +226,25 @@ namespace coralapp
 
             SqlCommand command = new SqlCommand(SQL, this.connection);
             SqlDataAdapter adapter = new SqlDataAdapter(command);
-            if (connection.State == ConnectionState.Closed)
+            if (connection.State != ConnectionState.Open)
             { connection.Open(); } //Если соединение не открыто еще, то мы его открываем
             DataTable priceTable = new DataTable();
             adapter.Fill(priceTable);
             return priceTable;
+        }
+
+        private DataTable getAvailableCommodityList()
+        {
+            //
+            String SQL = "Select * FROM [AvailableCommodityList]";
+
+            SqlCommand command = new SqlCommand(SQL, this.connection);
+            SqlDataAdapter adapter = new SqlDataAdapter(command);
+            if (connection.State != ConnectionState.Open)
+            { connection.Open(); } //Если соединение не открыто еще, то мы его открываем
+            DataTable commodityTable = new DataTable();
+            adapter.Fill(commodityTable);
+            return commodityTable;
         }
 
         private void cbNewProductName_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -258,7 +284,113 @@ private void addNewSupplyDB(int priceId, int quantity) {
    }
 }
 
+        private void cbSaleProductName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void cbSaleProductCode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void bSaleAddInTable_Click(object sender, RoutedEventArgs e)
+        {
+            string commodityName = cbSaleProductName.Text; //Переменная для хранения имени товара
+            string commodityCode = cbSaleProductCode.Text; //Переменная для хранения кода товара
+            string commodityCodeSelected = null;
+            string commodityNameSelected = null;
+            int quantity = Int32.Parse(tbSaleProductQuantity.Text); //Переменная, хранящая численное значение (количество товара)
+            int priceid = -1; //Вспомогательная переменная для добавления товара в БД
+
+
+            if ((cbSaleProductCode.SelectedValue == null && commodityCode != String.Empty)
+                || (cbSaleProductName.SelectedValue == null && commodityName != String.Empty))
+            //если хотя бы один комбобокс заполнено, но при этом нет совпадений введенного значения ни с одной записью из списка, то
+            {
+                MessageBox.Show("Выбран несуществующий товар");
+                //То выдаем сообщение об ошибке
+                return;
+            }
+
+            if (commodityCode != String.Empty && commodityName != String.Empty)
+            {
+                //Если информация из двух комбобоксов относятся к разным товарам 
+                // (проверка по связанному атрибуту - priceid. оно должно совпадать)
+                int priceidCode = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["price_id"].ToString());
+                int priceidName = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["price_id"].ToString());
+                if (priceidCode != priceidName)
+                {
+                    MessageBox.Show("Код и наименование товара не соответствуют");
+                    //То выдаем сообщение об ошибке
+                    return;
+                }
+
+                else
+                {
+                    priceid = priceidCode; //иначе присваиваем priceid любой айдишник цены
+                    commodityNameSelected = (cbSaleProductName.SelectedValue as DataRowView)["commodity_name"].ToString();
+                    commodityCodeSelected = (cbSaleProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
+                }
+
+            }
+            else
+            { //если хотя бы один комбобокс пуст
+                if (commodityCode != String.Empty)
+                {
+                    priceid = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["price_id"].ToString());
+
+                    commodityNameSelected = (cbSaleProductCode.SelectedValue as DataRowView)["commodity_name"].ToString();
+                    commodityCodeSelected = (cbSaleProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
+                }
+
+                //то забираем строчечку и присваиваем нашей переменной значение из БД
+
+                else
+                {
+                    if (commodityName != String.Empty)
+                    {
+                        priceid = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["price_id"].ToString());
+                        commodityNameSelected = (cbSaleProductName.SelectedValue as DataRowView)["commodity_name"].ToString();
+                        commodityCodeSelected = (cbSaleProductName.SelectedValue as DataRowView)["coralclub_id"].ToString();
+                    }
+
+                    else
+                    { //если все пусто, то сообщение об ошибке выводим
+                        MessageBox.Show("Не выбран ни один товар");
+                        return;
+                    }
+                }
+            }
+            this.saleProducts.Add(new Product(commodityNameSelected,
+                commodityCodeSelected, quantity, priceid));
+            //В майн виндоу создаем коллекцию и добавляем в нее товар (данные мы уже забрали из бд и при вводе)
+        }
+
+        private void bSaleAddInDB_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(prediction().ToString());
+        }
+
+        private double prediction()
+        {
+            // Declare some sample test data.
+            double[] inputs = { 80, 60, 10, 20, 30 };
+            double[] outputs = { 20, 40, 30, 50, 60 };
+
+            // Use Ordinary Least Squares to learn the regression
+            OrdinaryLeastSquares ols = new OrdinaryLeastSquares();
+
+            // Use OLS to learn the simple linear regression
+            SimpleLinearRegression regression = ols.Learn(inputs, outputs);
+
+            // Compute the output for a given input:
+            double y = regression.Transform(85); // The answer will be 28.088
+
+            return y;
+        }
     }
+
 
     public class Commodity : IDataErrorInfo
         
@@ -302,6 +434,8 @@ private void addNewSupplyDB(int priceId, int quantity) {
 
     public class Product {
         //Создали класс с полями, ура, методы. счастье. Спасбо за внимание
+
+        //ПОЛИ-НА!!! :))
         public string name { get; set; }
         public int quantity { get; set; }
         public string coralid { get; set; }

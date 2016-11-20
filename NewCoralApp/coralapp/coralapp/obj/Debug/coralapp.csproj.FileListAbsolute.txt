@@ -37,3 +37,15 @@ C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debu
 C:\Users\DELL\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\coralapp.exe.config
 C:\Users\DELL\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp.exe
 C:\Users\DELL\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp.pdb
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.dll.config
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.dll
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.xml
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp_Content.g.cs
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.MachineLearning.dll
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.Math.Core.dll
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.Math.dll
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.Statistics.dll
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.MachineLearning.xml
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.Math.xml
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.Math.Core.xml
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\Accord.Statistics.xml
