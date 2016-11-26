@@ -267,6 +267,8 @@ namespace coralapp
 private void addNewSupplyDB(int priceId, int quantity) {
    try
    {
+                if (this.connection.State != ConnectionState.Open)
+                { this.connection.Open(); }
                 using (SqlCommand cmd = new SqlCommand("newSupply", this.connection))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -288,6 +290,36 @@ private void addNewSupplyDB(int priceId, int quantity) {
        MessageBox.Show(ex.Message);
    }
 }
+        private void saleProductDB(int ledgerId, int quantity, int priceId) {
+            try
+            {
+                if (this.connection.State != ConnectionState.Open)
+                { this.connection.Open(); }
+                using (SqlCommand cmd = new SqlCommand("saleProduct", this.connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlParameter pLedgerId = new SqlParameter("@ledger_id", SqlDbType.Int);
+                    pLedgerId.Value = ledgerId;
+
+                    SqlParameter pQuantity = new SqlParameter("@quantity", SqlDbType.Int);
+                    pQuantity.Value = quantity;
+
+                    SqlParameter pPriceId = new SqlParameter("@price_id", SqlDbType.Int);
+                    pPriceId.Value = priceId;
+
+                    cmd.Parameters.Add(pLedgerId);
+                    cmd.Parameters.Add(pQuantity);
+                    cmd.Parameters.Add(pPriceId);
+                    cmd.ExecuteNonQuery();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 
         private void cbSaleProductName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -315,11 +347,13 @@ private void addNewSupplyDB(int priceId, int quantity) {
                 tbSaleProductQuantity.Text = "0";
             }
             int priceid = -1; //Вспомогательная переменная для добавления товара в БД
+            int ledgerid = -1;
             int currentLedger = 0;
             int onSale1 = 0;
             int onSale2 = 0;
             int onSale3 = 0;
             int notOnSale = 0;
+            
 
             if ((cbSaleProductCode.SelectedValue == null && commodityCode != String.Empty)
                 || (cbSaleProductName.SelectedValue == null && commodityName != String.Empty))
@@ -353,6 +387,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
                     onSale2 = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["on_sale_2"].ToString());
                     onSale3 = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["on_sale_3"].ToString());
                     notOnSale = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["not_on_sale"].ToString());
+                    ledgerid = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["ledger_id"].ToString());
                 }
 
             }
@@ -369,6 +404,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
                     onSale2 = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["on_sale_2"].ToString());
                     onSale3 = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["on_sale_3"].ToString());
                     notOnSale = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["not_on_sale"].ToString());
+                    ledgerid = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["ledger_id"].ToString());
                 }
 
                 //то забираем строчечку и присваиваем нашей переменной значение из БД
@@ -385,6 +421,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
                         onSale2 = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["on_sale_2"].ToString());
                         onSale3 = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["on_sale_3"].ToString());
                         notOnSale = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["not_on_sale"].ToString());
+                        ledgerid = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["ledger_id"].ToString());
                     }
 
                     else
@@ -446,7 +483,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
                         if (dialogResult == MessageBoxResult.Yes)
                         {
                             this.saleProducts.Add(new Product(commodityNameSelected,
-                    commodityCodeSelected, quantity, priceid, 0, 0, 0, quantity,
+                    commodityCodeSelected, quantity, priceid, ledgerid, 0, 0, 0, quantity,
                     onSale1, onSale2, onSale3, notOnSale, currentLedger));
                             return;
                         }
@@ -455,7 +492,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
                     {
                         int[] results = calculateVolumes(quantity,currentLedger,onSale1,onSale2,onSale3);
                         this.saleProducts.Add(new Product(commodityNameSelected,
-                    commodityCodeSelected, quantity, priceid, results[0], results[1], results[2], results[3],
+                    commodityCodeSelected, quantity, priceid, ledgerid, results[0], results[1], results[2], results[3],
                     onSale1, onSale2, onSale3, notOnSale, currentLedger));
                         return;
                     }
@@ -463,7 +500,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
                 else
                 {
                     this.saleProducts.Add(new Product(commodityNameSelected,
-                    commodityCodeSelected, quantity, priceid, 0, 0, 0, quantity,
+                    commodityCodeSelected, quantity, priceid, ledgerid, 0, 0, 0, quantity,
                     onSale1, onSale2, onSale3, notOnSale, currentLedger));
                     return;
                 }
@@ -589,7 +626,18 @@ private void addNewSupplyDB(int priceId, int quantity) {
 
         private void bSaleAddInDB_Click(object sender, RoutedEventArgs e)
         {
+            foreach (Product p in this.saleProducts)
+            {
+                if (p.quantity > 0)
+                {
+                    saleProductDB(p.ledgerid, p.quantity, p.priceid);
+                }
+            }
 
+            this.saleProducts.Clear();
+            cbSaleProductCode.SelectedIndex = -1;
+            cbSaleProductName.SelectedIndex = -1;
+            tbSaleProductQuantity.Text = "0";
         }
 
         private double prediction()
@@ -867,6 +915,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
         }
         public string coralid { get; set; }
         public int priceid { get; set; }
+        public int ledgerid { get; set; }
         public int onSale1 {
             get { return this.sale1; }
             set {
@@ -931,13 +980,14 @@ private void addNewSupplyDB(int priceId, int quantity) {
             this.withoutSale = quantity;
         }
 
-        public Product(string name, string coralid, int quantity, int priceid, int onSale1, int onSale2, int onSale3, int withoutSale,
+        public Product(string name, string coralid, int quantity, int priceid, int ledgerid, int onSale1, int onSale2, int onSale3, int withoutSale,
             int origOnSale1, int origOnSale2, int origOnSale3, int origWithoutSale, int ledger)
         {
             //конструктор второй (расширенный)
             this.name = name;
             this.coralid = coralid;
             this.priceid = priceid;
+            this.ledgerid = ledgerid;
             this.onSale1 = onSale1;
             this.onSale2 = onSale2;
             this.onSale3 = onSale3;
