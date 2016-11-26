@@ -43,13 +43,17 @@
                     <TextBox x:Name="tbSaleProductQuantity" Height="34" Margin="165,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154" HorizontalAlignment="Left" Text="0"/>
                     <CheckBox x:Name="cbSalePromo" Content="Акция?" Height="34" Margin="337,39,0,0" VerticalAlignment="Top" Width="78" FontSize="14" HorizontalAlignment="Left"/>
                     <Button x:Name="bSaleAddInTable" Content="Добавить в корзину" Height="34" Margin="419,39,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" HorizontalAlignment="Left" Click="bSaleAddInTable_Click"/>
-                    <DataGrid x:Name="dgSale" Margin="5,80,5,45" AutoGenerateColumns="False">
+                    <DataGrid x:Name="dgSale" Margin="5,80,5,45" AutoGenerateColumns="False" CellEditEnding="dgSale_CellEditEnding">
                         <DataGrid.Columns>
-                            <DataGridTextColumn IsReadOnly = "True" Binding="{Binding name}" Header="Наименование товара" Width="250"/>
+                            <DataGridTextColumn IsReadOnly = "True" Binding="{Binding name}" Header="Наименование товара" Width="200"/>
                             <DataGridTextColumn IsReadOnly = "True" Binding="{Binding coralid}" Header="Код товара" Width="120"/>
-                            <DataGridTextColumn Binding="{Binding quantity}" Header="Количество товара" Width="120"/>
+                            <DataGridTextColumn Binding="{Binding onSale1}" Header="По акции 1" Width="80"/>
+                            <DataGridTextColumn Binding="{Binding onSale2}" Header="По акции 2" Width="80"/>
+                            <DataGridTextColumn Binding="{Binding onSale3}" Header="По акции 3" Width="80"/>
+                            <DataGridTextColumn Binding="{Binding withoutSale}" Header="Без акции" Width="80"/>
+                            <DataGridTextColumn IsReadOnly ="True" Binding="{Binding quantity}" Header="Итого" Width="80"/>
                         </DataGrid.Columns>
-                        </DataGrid>
+                    </DataGrid>
                     <Button x:Name="bSaleAddInDB" Content="Продать" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="156" FontSize="14" Background="#FFC5FFFF" HorizontalAlignment="Right" Click="bSaleAddInDB_Click"/>
                 </Grid>
             </TabItem>
@@ -61,8 +65,8 @@
                     <ComboBox x:Name="cbNewProductCode" HorizontalAlignment="Left" Height="34" Margin="420,0,0,0"  VerticalAlignment="Top" Width="156" TextSearch.TextPath="coralclub_id" DisplayMemberPath="coralclub_id" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding price_id}" SelectionChanged="cbNewProductCode_SelectionChanged" />
                     <Label x:Name="lNewProductQuantity" Content="Количество" HorizontalAlignment="Left" Height="34" Margin="50,38,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
                     <TextBox x:Name="tbNewProductQuantity" Text="0" HorizontalAlignment="Left" Height="34" Margin="166,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154"/>
-                    <Button x:Name="bNewAddInTable" Content="Добавить" HorizontalAlignment="Left" Height="34" Margin="326,39,0,0" VerticalAlignment="Top" Width="90" FontSize="14" Background="#FFC5FFFF" Click="bNewAddInTable_Click"/>
-                    <Button x:Name="bNewUploadFromExcel" Content="Загрузить из excel " HorizontalAlignment="Left" Height="34" Margin="420,39,0,0" VerticalAlignment="Top" Width="156" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
+                    <Button x:Name="bNewAddInTable" Content="Добавить" HorizontalAlignment="Left" Height="34" Margin="597,38,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bNewAddInTable_Click"/>
+                    <Button x:Name="bNewUploadFromExcel" Content="Загрузить из excel " HorizontalAlignment="Left" Height="34" Margin="597,0,0,0" VerticalAlignment="Top" Width="156" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
                     <DataGrid x:Name="dgNew" Margin="5,80,5,45" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn IsReadOnly = "True" Binding="{Binding name}" Header="Наименование товара" Width="250"/>
@@ -71,6 +75,8 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <Button x:Name="bNewAddInDB" Content="Добавить в базу данных" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="176" FontSize="14" Background="#FFC5FFFF" Click="bNewAddInDB_Click"/>
+                    <Label x:Name="lNewProductDate" Content="Годен до" HorizontalAlignment="Left" Height="34" Margin="326,38,0,0" VerticalAlignment="Top" Width="90" FontSize="14"/>
+                    <DatePicker HorizontalAlignment="Left" Margin="420,41,0,0" VerticalAlignment="Top" Width="156" FirstDayOfWeek="Monday" Height="31"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabSearch" Header="Что на складе?" Background="White" FontFamily="Comic Sans MS">
@@ -90,15 +96,15 @@
                 Value="{Binding RelativeSource={RelativeSource Self}, 
                        Path=(Validation.Errors)[0].ErrorContent}"/>
                                         <Setter Property="Validation.ErrorTemplate">
-                                        <Setter.Value>
-                                            <ControlTemplate x:Name="TextErrorTemplate">
-                                                <DockPanel>
+                                            <Setter.Value>
+                                                <ControlTemplate x:Name="TextErrorTemplate">
+                                                    <DockPanel>
                                                         <Border BorderBrush="Red" BorderThickness="1">
                                                             <AdornedElementPlaceholder/>
                                                         </Border>
                                                     </DockPanel>
-                                            </ControlTemplate>
-                                        </Setter.Value>
+                                                </ControlTemplate>
+                                            </Setter.Value>
                                         </Setter>
                                     </Trigger>
                                 </Style.Triggers>

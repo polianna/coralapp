@@ -27,6 +27,10 @@ namespace coralapp
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const int SALE1VALUE = 4;
+        private const int SALE2VALUE = 5;
+        private const int SALE3VALUE = 6;
+
         private String connectionString;
         private SqlConnection connection; //Свойство. Оно описано ниже.
         private ObservableCollection<Product> newProducts = new ObservableCollection<Product>();
@@ -300,10 +304,21 @@ private void addNewSupplyDB(int priceId, int quantity) {
             string commodityCode = cbSaleProductCode.Text; //Переменная для хранения кода товара
             string commodityCodeSelected = null;
             string commodityNameSelected = null;
-            int quantity = Int32.Parse(tbSaleProductQuantity.Text); //Переменная, хранящая численное значение (количество товара)
+            int quantity = 0;
+            try
+            {
+                quantity = Int32.Parse(tbSaleProductQuantity.Text); //Переменная, хранящая численное значение (количество товара)
+            }
+            catch (Exception exc) {
+                quantity = 0;
+                tbSaleProductQuantity.Text = "0";
+            }
             int priceid = -1; //Вспомогательная переменная для добавления товара в БД
             int currentLedger = 0;
-
+            int onSale1 = 0;
+            int onSale2 = 0;
+            int onSale3 = 0;
+            int notOnSale = 0;
 
             if ((cbSaleProductCode.SelectedValue == null && commodityCode != String.Empty)
                 || (cbSaleProductName.SelectedValue == null && commodityName != String.Empty))
@@ -333,6 +348,10 @@ private void addNewSupplyDB(int priceId, int quantity) {
                     commodityNameSelected = (cbSaleProductName.SelectedValue as DataRowView)["commodity_name"].ToString();
                     commodityCodeSelected = (cbSaleProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
                     currentLedger = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["quantity"].ToString());
+                    onSale1 = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["on_sale_1"].ToString());
+                    onSale2 = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["on_sale_2"].ToString());
+                    onSale3 = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["on_sale_3"].ToString());
+                    notOnSale = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["not_on_sale"].ToString());
                 }
 
             }
@@ -345,6 +364,10 @@ private void addNewSupplyDB(int priceId, int quantity) {
                     commodityNameSelected = (cbSaleProductCode.SelectedValue as DataRowView)["commodity_name"].ToString();
                     commodityCodeSelected = (cbSaleProductCode.SelectedValue as DataRowView)["coralclub_id"].ToString();
                     currentLedger = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["quantity"].ToString());
+                    onSale1 = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["on_sale_1"].ToString());
+                    onSale2 = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["on_sale_2"].ToString());
+                    onSale3 = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["on_sale_3"].ToString());
+                    notOnSale = Int32.Parse((cbSaleProductCode.SelectedValue as DataRowView)["not_on_sale"].ToString());
                 }
 
                 //то забираем строчечку и присваиваем нашей переменной значение из БД
@@ -357,6 +380,10 @@ private void addNewSupplyDB(int priceId, int quantity) {
                         commodityNameSelected = (cbSaleProductName.SelectedValue as DataRowView)["commodity_name"].ToString();
                         commodityCodeSelected = (cbSaleProductName.SelectedValue as DataRowView)["coralclub_id"].ToString();
                         currentLedger = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["quantity"].ToString());
+                        onSale1 = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["on_sale_1"].ToString());
+                        onSale2 = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["on_sale_2"].ToString());
+                        onSale3 = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["on_sale_3"].ToString());
+                        notOnSale = Int32.Parse((cbSaleProductName.SelectedValue as DataRowView)["not_on_sale"].ToString());
                     }
 
                     else
@@ -368,11 +395,40 @@ private void addNewSupplyDB(int priceId, int quantity) {
             }
             foreach (Product prod in this.saleProducts) {
                 if (priceid == prod.priceid) {
-                    quantity += prod.quantity;
-                    if (currentLedger >= quantity)
+                    int total = prod.quantity + quantity;
+                    if (currentLedger >= total)
                     {
-                        prod.quantity = quantity;
-                        dgSale.Items.Refresh();
+                        if (cbSalePromo.IsChecked ?? false) {
+                            if (onSale1 + onSale2 + onSale3 == 0)
+                            {
+                                MessageBoxResult dialogResult = MessageBox.Show("Акционный товар отсутствует.\r\n Выполнить продажу без акции?",
+                                                                                "Предупреждение", MessageBoxButton.YesNo);
+                                if (dialogResult == MessageBoxResult.Yes)
+                                {
+                                    prod.quantity += quantity;
+                                    prod.withoutSale += quantity;
+                                    dgSale.Items.Refresh();
+                                    return;
+                                }
+                            }
+                            else {
+                                int[] results = calculateVolumes(quantity, currentLedger, onSale1, onSale2, onSale3);
+                                prod.onSale1 += results[0];
+                                prod.onSale2 += results[1];
+                                prod.onSale3 += results[2];
+                                prod.withoutSale += results[3];
+                                prod.quantity += results[0] + results[1] + results[2] + results[3];
+                                dgSale.Items.Refresh();
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            prod.quantity += quantity;
+                            prod.withoutSale += quantity;
+                            dgSale.Items.Refresh();
+                            return;
+                        }
                     }
                     else MessageBox.Show("На складе недостаточно товара. Доступное количество - " + currentLedger);
                     return;
@@ -380,16 +436,159 @@ private void addNewSupplyDB(int priceId, int quantity) {
             }
             if (currentLedger >= quantity)
             {
-                this.saleProducts.Add(new Product(commodityNameSelected,
-                    commodityCodeSelected, quantity, priceid));
+                if (cbSalePromo.IsChecked ?? false)
+                {
+                    if (onSale1 + onSale2 + onSale3 == 0)
+                    {
+                        MessageBoxResult dialogResult = MessageBox.Show("Акционный товар отсутствует.\r\n Выполнить продажу без акции?",
+                                                                        "Предупреждение", MessageBoxButton.YesNo);
+                        if (dialogResult == MessageBoxResult.Yes)
+                        {
+                            this.saleProducts.Add(new Product(commodityNameSelected,
+                    commodityCodeSelected, quantity, priceid, 0, 0, 0, quantity,
+                    onSale1, onSale2, onSale3, notOnSale, currentLedger));
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        int[] results = calculateVolumes(quantity,currentLedger,onSale1,onSale2,onSale3);
+                        this.saleProducts.Add(new Product(commodityNameSelected,
+                    commodityCodeSelected, quantity, priceid, results[0], results[1], results[2], results[3],
+                    onSale1, onSale2, onSale3, notOnSale, currentLedger));
+                        return;
+                    }
+                }
+                else
+                {
+                    this.saleProducts.Add(new Product(commodityNameSelected,
+                    commodityCodeSelected, quantity, priceid, 0, 0, 0, quantity,
+                    onSale1, onSale2, onSale3, notOnSale, currentLedger));
+                    return;
+                }
+                
             }
             else MessageBox.Show("На складе недостаточно товара. Доступное количество - " + currentLedger);
             //В майн виндоу создаем коллекцию и добавляем в нее товар (данные мы уже забрали из бд и при вводе)
         }
 
+        private int[] calculateVolumes(int quantity, int currentLedger, int onSale1, int onSale2, int onSale3 ) {
+            int demand = quantity;
+            int saledOnSale1 = 0;
+            int saledOnSale2 = 0;
+            int saledOnSale3 = 0;
+            int saledWithoutSale = 0;
+            while (demand > 0)
+            {
+                if (onSale1 > SALE1VALUE-1)
+                {
+                    while (onSale1 > SALE1VALUE-1 && demand > SALE1VALUE-2)
+                    {
+                        currentLedger -= SALE1VALUE;
+                        demand -= SALE1VALUE;
+                        if (demand > currentLedger)
+                        {
+                            currentLedger += SALE1VALUE;
+                            demand += SALE1VALUE;
+                            break;
+                        }
+                        else
+                        {
+                            onSale1 -= SALE1VALUE;
+                            saledOnSale1 += SALE1VALUE;
+                        }
+                    }
+                }
+                if (onSale2 > SALE2VALUE-1)
+                {
+                    while (onSale2 > SALE2VALUE-1 && demand > SALE2VALUE-2)
+                    {
+                        currentLedger -= SALE2VALUE;
+                        demand -= SALE2VALUE;
+                        if (demand > currentLedger)
+                        {
+                            currentLedger += SALE2VALUE;
+                            demand += SALE2VALUE;
+                            break;
+                        }
+                        else
+                        {
+                            onSale2 -= SALE2VALUE;
+                            saledOnSale2 += SALE2VALUE;
+                        }
+                    }
+                }
+                if (onSale3 > SALE3VALUE-1)
+                {
+                    while (onSale3 > SALE3VALUE-1 && demand > SALE3VALUE-2)
+                    {
+                        currentLedger -= SALE3VALUE;
+                        demand -= SALE3VALUE;
+                        if (demand > currentLedger)
+                        {
+                            currentLedger += SALE3VALUE;
+                            demand += SALE3VALUE;
+                            break;
+                        }
+                        else
+                        {
+                            onSale3 -= SALE3VALUE;
+                            saledOnSale3 += SALE3VALUE;
+                        }
+                    }
+                }
+                if (demand > 0)
+                {
+                    saledWithoutSale = demand;
+                    demand = 0;
+                }
+
+            }
+            return new int[4] { saledOnSale1,saledOnSale2,saledOnSale3,saledWithoutSale};
+        }
+
+        private int[] calculateBySaleVolumes(int saleType, int demand, int saleQuantity, int totalQuantity) {
+            int saleValue = 0;
+            int saledOnSale = 0;
+            int saledWithoutSale = 0;
+            switch (saleType) {
+                case 1: saleValue = SALE1VALUE; break;
+                case 2: saleValue = SALE2VALUE; break;
+                case 3: saleValue = SALE3VALUE; break;
+                default: saleValue = Int32.MaxValue; break;
+            }
+            while (demand > 0)
+            {
+                if (saleQuantity > saleValue - 1)
+                {
+                    while (saleQuantity > saleValue - 1 && demand > saleValue - 2)
+                    {
+                        totalQuantity -= saleValue;
+                        demand -= saleValue;
+                        if (demand > totalQuantity)
+                        {
+                            totalQuantity += saleValue;
+                            demand += saleValue;
+                            break;
+                        }
+                        else
+                        {
+                            saleQuantity -= saleValue;
+                            saledOnSale += saleValue;
+                        }
+                    }
+                }
+                if (demand > 0) {
+                    saledWithoutSale += demand;
+                    demand = 0;
+                }
+            }
+            return new int[2]{ saledOnSale, saledWithoutSale};
+        }
+
         private void bSaleAddInDB_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(prediction().ToString());
+
         }
 
         private double prediction()
@@ -409,7 +608,121 @@ private void addNewSupplyDB(int priceId, int quantity) {
 
             return y;
         }
+        
+
+        private void dgSale_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.EditAction == DataGridEditAction.Commit)
+            {
+                int count_new = 0;
+                Product prod_prev = (Product)e.Row.DataContext;
+                try
+                {
+                    count_new = Int32.Parse((e.EditingElement as TextBox).Text);
+                }
+                catch (Exception exc) {
+                    count_new = 0;
+                }
+                string column = e.Column.Header.ToString();
+                int[] results = new int[2] { 0, 0 };
+                int prev_value = 0;
+
+                switch (column)
+                {
+                    case "По акции 1":
+                        if (count_new > prod_prev.origOnSale1)
+                        {
+                            MessageBox.Show("Недостаточно товара на складе. Доступно товара по акции 1 - " + prod_prev.origOnSale1);
+                            e.Cancel = true;
+                            (sender as DataGrid).CancelEdit();
+                            return;
+                        }
+                        results = calculateBySaleVolumes(1, count_new, prod_prev.origOnSale1, prod_prev.ledger);
+                        prev_value = prod_prev.quantity;
+                        prod_prev.quantity -= prod_prev.onSale1;
+                        prod_prev.quantity += results[0] + results[1];
+                        if (prod_prev.quantity > prod_prev.ledger)
+                        {
+                            prod_prev.quantity = prev_value;
+                            MessageBox.Show("Недостаточно товара на складе. Всего доступно товара - " + prod_prev.ledger);
+                            e.Cancel = true;
+                            (sender as DataGrid).CancelEdit();
+                            return;
+                        }
+                        prod_prev.onSale1 = results[0];
+                        prod_prev.withoutSale += results[1];
+
+                        break;
+                    case "По акции 2":
+                        if (count_new > prod_prev.origOnSale2)
+                        {
+                            MessageBox.Show("Недостаточно товара на складе. Доступно товара по акции 2 - " + prod_prev.origOnSale2);
+                            e.Cancel = true;
+                            (sender as DataGrid).CancelEdit();
+                            return;
+                        }
+                        results = calculateBySaleVolumes(2, count_new, prod_prev.origOnSale2, prod_prev.ledger);
+                        prev_value = prod_prev.quantity;
+                        prod_prev.quantity -= prod_prev.onSale2;
+                        prod_prev.quantity += results[0] + results[1];
+                        if (prod_prev.quantity > prod_prev.ledger)
+                        {
+                            prod_prev.quantity = prev_value;
+                            MessageBox.Show("Недостаточно товара на складе. Всего доступно товара - " + prod_prev.ledger);
+                            e.Cancel = true;
+                            (sender as DataGrid).CancelEdit();
+                            return;
+                        }
+                        prod_prev.onSale2 += results[0];
+                        prod_prev.withoutSale += results[1];
+                        break;
+                    case "По акции 3":
+                        if (count_new > prod_prev.origOnSale3)
+                        {
+                            MessageBox.Show("Недостаточно товара на складе. Доступно товара по акции 3 - " + prod_prev.origOnSale3);
+                            e.Cancel = true;
+                            (sender as DataGrid).CancelEdit();
+                            return;
+                        }
+                        results = calculateBySaleVolumes(3, count_new, prod_prev.origOnSale3, prod_prev.ledger);
+                        prev_value = prod_prev.quantity;
+                        prod_prev.quantity -= prod_prev.onSale3;
+                        prod_prev.quantity += results[0] + results[1];
+                        if (prod_prev.quantity > prod_prev.ledger)
+                        {
+                            prod_prev.quantity = prev_value;
+                            MessageBox.Show("Недостаточно товара на складе. Всего доступно товара - " + prod_prev.ledger);
+                            e.Cancel = true;
+                            (sender as DataGrid).CancelEdit();
+                            return;
+                        }
+                        prod_prev.onSale3 = results[0];
+                        prod_prev.withoutSale += results[1];
+                        break;
+                    case "Без акции":
+                        prev_value = prod_prev.quantity;
+                        prod_prev.quantity -= prod_prev.withoutSale;
+                        prod_prev.quantity += count_new;
+                        if (prod_prev.quantity > prod_prev.ledger)
+                        {
+                            prod_prev.quantity = prev_value;
+                            MessageBox.Show("Недостаточно товара на складе. Всего доступно товара - " + prod_prev.ledger);
+                            e.Cancel = true;
+                            (sender as DataGrid).CancelEdit();
+                            return;
+                        }
+                        prod_prev.withoutSale = count_new;
+                        break;
+                }
+                e.Cancel = true;
+                (sender as DataGrid).CancelEdit();
+            }
+
+        }
+        
     }
+
+
 
 
     public class Commodity : IDataErrorInfo
@@ -452,15 +765,83 @@ private void addNewSupplyDB(int priceId, int quantity) {
         }
     }
 
-    public class Product {
+    public class Product: INotifyPropertyChanged
+    {
         //Создали класс с полями, ура, методы. счастье. Спасбо за внимание
 
         //ПОЛИ-НА!!! :))
         public string name { get; set; }
-        public int quantity { get; set; }
+        private int sale1;
+        private int sale2;
+        private int sale3;
+        private int withoutsale;
+        private int total;
+
+        public int quantity
+        {
+            get { return this.total; }
+            set
+            {
+                if (this.total != value)
+                {
+                    this.total = value;
+                    this.NotifyPropertyChanged("quantity");
+                }
+            }
+        }
         public string coralid { get; set; }
         public int priceid { get; set; }
-        public int curLedger { get; set; }
+        public int onSale1 {
+            get { return this.sale1; }
+            set {
+                if (this.sale1 != value)
+                {
+                    this.sale1 = value;
+                    this.NotifyPropertyChanged("onSale1");
+                }
+            }
+        }
+        public int onSale2
+        {
+            get { return this.sale2; }
+            set
+            {
+                if (this.sale2 != value)
+                {
+                    this.sale2 = value;
+                    this.NotifyPropertyChanged("onSale2");
+                }
+            }
+        }
+        public int onSale3
+        {
+            get { return this.sale3; }
+            set
+            {
+                if (this.sale3 != value)
+                {
+                    this.sale3 = value;
+                    this.NotifyPropertyChanged("onSale3");
+                }
+            }
+        }
+        public int withoutSale
+        {
+            get { return this.withoutsale; }
+            set
+            {
+                if (this.withoutsale != value)
+                {
+                    this.withoutsale = value;
+                    this.NotifyPropertyChanged("withoutSale");
+                }
+            }
+        }
+        public int origOnSale1 { get; set; }
+        public int origOnSale2 { get; set; }
+        public int origOnSale3 { get; set; }
+        public int origWithoutSale { get; set; }
+        public int ledger { get; set; }
 
         public Product(string name, string coralid, int quantity, int priceid) {
             //конструктор первый
@@ -468,17 +849,53 @@ private void addNewSupplyDB(int priceId, int quantity) {
             this.coralid = coralid;
             this.quantity = quantity;
             this.priceid = priceid;
-            this.curLedger = 0;
+            this.onSale1 = 0;
+            this.onSale2 = 0;
+            this.onSale3 = 0;
+            this.withoutSale = quantity;
         }
 
-        public Product(string name, string coralid, int quantity, int priceid, int curLedger)
+        public Product(string name, string coralid, int quantity, int priceid, int onSale1, int onSale2, int onSale3, int withoutSale,
+            int origOnSale1, int origOnSale2, int origOnSale3, int origWithoutSale, int ledger)
         {
             //конструктор второй (расширенный)
             this.name = name;
             this.coralid = coralid;
-            this.quantity = quantity;
             this.priceid = priceid;
-            this.curLedger = curLedger;
+            this.onSale1 = onSale1;
+            this.onSale2 = onSale2;
+            this.onSale3 = onSale3;
+            this.withoutSale = withoutSale;
+            this.quantity = onSale1 + onSale2 + onSale3 + withoutSale;
+            this.origOnSale1 = origOnSale1;
+            this.origOnSale2 = origOnSale2;
+            this.origOnSale3 = origOnSale3;
+            this.origWithoutSale = origWithoutSale;
+            this.ledger = ledger;
+            Console.WriteLine(ledger);
+        }
+
+        public Product(Product prod) {
+            this.name = prod.name;
+            this.coralid = prod.coralid;
+            this.priceid = prod.priceid;
+            this.onSale1 = prod.onSale1;
+            this.onSale2 = prod.onSale2;
+            this.onSale3 = prod.onSale3;
+            this.withoutSale = prod.withoutSale;
+            this.quantity = prod.quantity;
+            this.origOnSale1 = prod.origOnSale1;
+            this.origOnSale2 = prod.origOnSale2;
+            this.origOnSale3 = prod.origOnSale3;
+            this.origWithoutSale = prod.origWithoutSale;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void NotifyPropertyChanged(string propName)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
 
     }
