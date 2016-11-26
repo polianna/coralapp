@@ -80,3 +80,13 @@ C:\Users\DELL\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\
 C:\Users\DELL\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\coralapp.csproj.GenerateResource.Cache
 C:\Users\DELL\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\Admin.g.cs
 C:\Users\DELL\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\Admin.baml
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\NPOI.dll
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\NPOI.OOXML.dll
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\NPOI.OpenXml4Net.dll
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\NPOI.OpenXmlFormats.dll
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\bin\Debug\NPOI.xml
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\Admin.g.cs
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\manager.g.cs
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\Admin.baml
+C:\Users\xkirax\Documents\GitHub\coralapp\NewCoralApp\coralapp\coralapp\obj\Debug\manager.baml

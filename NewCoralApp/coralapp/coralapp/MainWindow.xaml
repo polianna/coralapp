@@ -66,7 +66,7 @@
                     <Label x:Name="lNewProductQuantity" Content="Количество" HorizontalAlignment="Left" Height="34" Margin="50,38,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
                     <TextBox x:Name="tbNewProductQuantity" Text="0" HorizontalAlignment="Left" Height="34" Margin="166,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="154"/>
                     <Button x:Name="bNewAddInTable" Content="Добавить" HorizontalAlignment="Left" Height="34" Margin="597,38,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bNewAddInTable_Click"/>
-                    <Button x:Name="bNewUploadFromExcel" Content="Загрузить из excel " HorizontalAlignment="Left" Height="34" Margin="597,0,0,0" VerticalAlignment="Top" Width="156" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
+                    <Button x:Name="bNewUploadFromExcel" Content="Загрузить из excel " HorizontalAlignment="Left" Height="34" Margin="597,0,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bNewUploadFromExcel_Click"/>
                     <DataGrid x:Name="dgNew" Margin="5,80,5,45" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn IsReadOnly = "True" Binding="{Binding name}" Header="Наименование товара" Width="250"/>
