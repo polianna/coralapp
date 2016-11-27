@@ -72,11 +72,12 @@
                             <DataGridTextColumn IsReadOnly = "True" Binding="{Binding name}" Header="Наименование товара" Width="250"/>
                             <DataGridTextColumn IsReadOnly = "True" Binding="{Binding coralid}" Header="Код товара" Width="120"/>
                             <DataGridTextColumn Binding="{Binding quantity}" Header="Количество товара" Width="120"/>
+                            <DataGridTextColumn IsReadOnly = "True" Binding="{Binding expirationdate}" Header="Срок годности" Width="120"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <Button x:Name="bNewAddInDB" Content="Добавить в базу данных" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="176" FontSize="14" Background="#FFC5FFFF" Click="bNewAddInDB_Click"/>
                     <Label x:Name="lNewProductDate" Content="Годен до" HorizontalAlignment="Left" Height="34" Margin="326,38,0,0" VerticalAlignment="Top" Width="90" FontSize="14"/>
-                    <DatePicker HorizontalAlignment="Left" Margin="420,41,0,0" VerticalAlignment="Top" Width="156" FirstDayOfWeek="Monday" Height="31"/>
+                    <DatePicker x:Name="dpExpirationDate" HorizontalAlignment="Left" Margin="420,41,0,0" VerticalAlignment="Top" Width="156" FirstDayOfWeek="Monday" Height="31"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabSearch" Header="Что на складе?" Background="White" FontFamily="Comic Sans MS">
@@ -114,7 +115,7 @@
                             <Binding Path="Name" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged"/>
                         </TextBox.Text>
                     </TextBox>
-                    <DataGrid x:Name="dgSearch" Margin="5,40,5,45" AutoGenerateColumns="False" SelectionChanged="dgSearch_SelectionChanged">
+                    <DataGrid x:Name="dgSearch" Margin="5,40,5,45" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding commodity_name}" Header="Наименование товара" Width="120"/>
                             <DataGridTextColumn Binding="{Binding coralclub_id}" Header="Код товара" Width="125"/>

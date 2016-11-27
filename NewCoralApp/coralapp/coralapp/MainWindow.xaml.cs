@@ -6,19 +6,10 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Data.OleDb;
 
 namespace coralapp
@@ -94,11 +85,7 @@ namespace coralapp
             if (tbSearchProductCode.Text == "код товара")
                 tbSearchProductCode.Clear();
         }
-
-        private void dgSearch_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
         
-        }
 
         private void button_Click(object sender, RoutedEventArgs e) 
   //Метод для поиска товара по коду или по названию. 
@@ -146,6 +133,7 @@ namespace coralapp
             string commodityCodeSelected = null;
             string commodityNameSelected = null;
             int quantity = Int32.Parse(tbNewProductQuantity.Text); //Переменная, хранящая численное значение (количество товара)
+            string expirationdate = dpExpirationDate.Text;
             int priceid = -1; //Вспомогательная переменная для добавления товара в БД
 
 
@@ -206,7 +194,7 @@ namespace coralapp
                 }
             }
             this.newProducts.Add(new Product(commodityNameSelected,
-                commodityCodeSelected, quantity, priceid));
+                commodityCodeSelected, quantity, priceid, expirationdate));
             //В майн виндоу создаем коллекцию и добавляем в нее товар (данные мы уже забрали из бд и при вводе) 
         }
 
@@ -478,7 +466,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
                 {
                     if (onSale1 + onSale2 + onSale3 == 0)
                     {
-                        MessageBoxResult dialogResult = MessageBox.Show("Акционный товар отсутствует.\r\n Выполнить продажу без акции?",
+                        MessageBoxResult dialogResult = MessageBox.Show("Акционный товар отсутствует.\r\nВыполнить продажу без акции?",
                                                                         "Предупреждение", MessageBoxButton.YesNo);
                         if (dialogResult == MessageBoxResult.Yes)
                         {
@@ -831,6 +819,43 @@ private void addNewSupplyDB(int priceId, int quantity) {
             
         }
 
+        private int getPriceId(string commodityName, double priceValue, double pointValue) {
+            try
+            {
+                if (this.connection.State != ConnectionState.Open)
+                { this.connection.Open(); }
+                using (SqlCommand cmd = new SqlCommand("SELECT dbo.getPriceId(@commodity_name,@price_value,@point_value)", this.connection))
+                {
+
+                    SqlParameter pCommodityName = new SqlParameter("@commodity_name", SqlDbType.NVarChar);
+                    pCommodityName.Value = commodityName;
+
+                    SqlParameter pPriceValue = new SqlParameter("@price_value", SqlDbType.Real);
+                    pPriceValue.Value = priceValue;
+
+                    SqlParameter pPointValue = new SqlParameter("@point_value", SqlDbType.Real);
+                    pPointValue.Value = pointValue;
+
+                    cmd.Parameters.Add(pCommodityName);
+                    cmd.Parameters.Add(pPriceValue);
+                    cmd.Parameters.Add(pPointValue);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    int price_id = -1;
+                    while (reader.Read()) {
+                        price_id = Int32.Parse(reader[0].ToString());
+                    }
+                    reader.Close();
+                    return price_id;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return -1;
+            }
+        }
+
         private void bNewUploadFromExcel_Click(object sender, RoutedEventArgs e)
         {
             DataTable excel = ReadExcelFile();
@@ -839,7 +864,18 @@ private void addNewSupplyDB(int priceId, int quantity) {
             {
                 int ledger = (int)((double)row["Остаток"]);
                 if (ledger > 0) {
-                    this.newProducts.Add(new Product((string)row["Наименование"], ((double)row["Код"]).ToString(), ledger, 0));
+                    string commodity_name = (string)row["Наименование"];
+                    string coralclub_code = ((double)row["Код"]).ToString();
+                    double price_value = (double)row["Цена"];
+                    double point_value = (double)row["Очки"];
+                    string expiration_date = "27.11.2016";
+                    int price_id = getPriceId(commodity_name,price_value,point_value);
+                    if (price_id == -1) {
+                        MessageBox.Show(String.Format("Товар {0} с ценой {1} руб и {2} очков не найден в БД.\r\nНеобходимо сначала добавить товар.", commodity_name, price_value, point_value));
+                    }
+                    else {
+                        this.newProducts.Add(new Product(commodity_name, coralclub_code, ledger, price_id, expiration_date));
+                    }
                 }
             }
             dgNew.ItemsSource = this.newProducts;
@@ -916,6 +952,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
         public string coralid { get; set; }
         public int priceid { get; set; }
         public int ledgerid { get; set; }
+        public string expirationdate { get; set; }
         public int onSale1 {
             get { return this.sale1; }
             set {
@@ -968,7 +1005,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
         public int origWithoutSale { get; set; }
         public int ledger { get; set; }
 
-        public Product(string name, string coralid, int quantity, int priceid) {
+        public Product(string name, string coralid, int quantity, int priceid, string expirationdate) {
             //конструктор первый
             this.name = name;
             this.coralid = coralid;
@@ -978,6 +1015,7 @@ private void addNewSupplyDB(int priceId, int quantity) {
             this.onSale2 = 0;
             this.onSale3 = 0;
             this.withoutSale = quantity;
+            this.expirationdate = expirationdate;
         }
 
         public Product(string name, string coralid, int quantity, int priceid, int ledgerid, int onSale1, int onSale2, int onSale3, int withoutSale,
