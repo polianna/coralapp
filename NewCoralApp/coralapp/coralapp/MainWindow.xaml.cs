@@ -181,7 +181,17 @@ namespace coralapp
             string commodityCode = cbNewProductCode.Text; //Переменная для хранения кода товара
             string commodityCodeSelected = null;
             string commodityNameSelected = null;
-            int quantity = Int32.Parse(tbNewProductQuantity.Text); //Переменная, хранящая численное значение (количество товара)
+            int quantity = 0;
+            try
+            {
+                quantity = Int32.Parse(tbNewProductQuantity.Text); //Переменная, хранящая численное значение (количество товара)
+            }
+            catch (Exception exc)
+            {
+                quantity = 0;
+                tbNewProductQuantity.Text = "0";
+            }
+            
             string expirationdate = dpExpirationDate.Text;
             int priceid = -1; //Вспомогательная переменная для добавления товара в БД
 
@@ -1003,6 +1013,29 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
             loginWindow.Show(); //то открываем главное окно
             this.Close(); //И закрываем текущее
         }
+
+        private void dgNew_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.EditAction == DataGridEditAction.Commit)
+            {
+                int count_new = 0;
+                Product prod_prev = (Product)e.Row.DataContext;
+                try
+                {
+                    count_new = Int32.Parse((e.EditingElement as TextBox).Text);
+                }
+                catch (Exception exc)
+                {
+                    count_new = 0;
+                }
+
+                prod_prev.quantity = count_new;
+
+                e.Cancel = true;
+                (sender as DataGrid).CancelEdit();
+            }
+        }
+        
     }
 
 

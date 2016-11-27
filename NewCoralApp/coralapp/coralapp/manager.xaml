@@ -60,5 +60,6 @@
                 </Grid>
             </TabItem>
         </TabControl>
+        <Button x:Name="bClose" Content="Выйти" HorizontalAlignment="Left" Margin="690,10,0,0" VerticalAlignment="Top" Width="86" Height="31" Click="bClose_Click"/>
     </Grid>
 </Window>

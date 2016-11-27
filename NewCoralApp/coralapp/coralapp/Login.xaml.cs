@@ -104,10 +104,11 @@ namespace coralapp
             SqlConnection connection = null;
             SqlDataReader reader = null; //Структура, тут это список 
             string dbPass = "";
+            string userRole = "";
             try
             {
                 connection = new SqlConnection(connectionString);
-                SqlCommand command = new SqlCommand("select pass from [User] where username = @username", connection);
+                SqlCommand command = new SqlCommand("select pass,role_name from [User] join [Role] on [User].role_id=[Role].role_id where username = @username", connection);
                 command.Parameters.Add("username", SqlDbType.NVarChar).Value = tbLogin.Text;
                 connection.Open();
                 reader = command.ExecuteReader(); //записали в нашу структуру данных полученный список
@@ -116,7 +117,7 @@ namespace coralapp
                 while (reader.Read())
                 {
                     dbPass = reader.GetString(0); //считываем данные из списка
-
+                    userRole = reader.GetString(1);
                 }
 
             }
@@ -138,8 +139,21 @@ namespace coralapp
                 bool isLogin = VerifyMd5Hash(md5Hash, pbPassword.Password, dbPass);
                 if (isLogin) //если пароль совпадает с паролем из БД
                 {
-                    MainWindow mainWindow = new MainWindow();
-                    mainWindow.Show(); //то открываем главное окно
+                    switch (userRole)
+                    {
+                        case "Administrator":
+                            Admin admin = new Admin();
+                            admin.Show(); //то открываем главное окно
+                            break;
+                        case "Sale":
+                            MainWindow mainWindow = new MainWindow();
+                            mainWindow.Show(); //то открываем главное окно
+                            break;
+                        case "Manager":
+                            manager managerWindow = new manager();
+                            managerWindow.Show(); //то открываем главное окно
+                            break;
+                    }
                     this.Close(); //И закрываем текущее
                 }
                 else
