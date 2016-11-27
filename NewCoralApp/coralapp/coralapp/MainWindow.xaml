@@ -24,15 +24,7 @@
         </Grid.RowDefinitions>
         <Label x:Name="lLogo" Content="Склад" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" Height="36" Width="96" FontFamily="Segoe Script" FontSize="24" FontWeight="Bold" Foreground="#FF073234"/>
         <Label x:Name="lDesc" Content="Магазин здорового питания" HorizontalAlignment="Left" Height="53" VerticalAlignment="Top" Width="240" FontFamily="Segoe Script" Margin="0,41,0,0" FontSize="14" Foreground="#FF073234" FontWeight="Bold" Grid.RowSpan="2"/>
-        <TabControl x:Name="tabControl" Grid.Row="1" Margin="0,0,5,10" Background="White" SelectionChanged="tabControl_SelectionChanged" SelectedIndex="1">
-            <TabItem Header="Важное" Background="White" FontFamily="Comic Sans MS">
-                <Grid Background="White" Margin="0,2,0,-2">
-                    <ScrollBar x:Name="scrollBar" HorizontalAlignment="Right" Height="100" Margin="725,0,0,0" VerticalAlignment="Top"/>
-                    <Border BorderBrush="Black" BorderThickness="1" Height="121" VerticalAlignment="Top" Margin="10,0,20,0"/>
-                    <Border BorderBrush="Black" BorderThickness="1" Height="121" VerticalAlignment="Top" Margin="10,126,20,0"/>
-                    <Border BorderBrush="Black" BorderThickness="1" Height="121" VerticalAlignment="Top" Margin="10,252,20,0"/>
-                </Grid>
-            </TabItem>
+        <TabControl x:Name="tabControl" Grid.Row="1" Margin="0,0,5,10" Background="White" SelectionChanged="tabControl_SelectionChanged" SelectedIndex="0">
             <TabItem x:Name="tabSale" Header="Продажа товара" Background="White" FontFamily="Comic Sans MS">
                 <Grid Background="White" Margin="0,12,0,0">
                     <Label x:Name="lSaleProductName" Content="Наименование" Height="34" Margin="49,0,0,0" VerticalAlignment="Top" Width="110" FontSize="14" HorizontalAlignment="Left"/>
@@ -83,7 +75,7 @@
             <TabItem x:Name="tabSearch" Header="Что на складе?" Background="White" FontFamily="Comic Sans MS">
                 <Grid Background="White" Margin="0,12,0,0">
                     <Button x:Name="bSearchAllProduct" Content="Весь товар на складе" HorizontalAlignment="Left" Height="34" Margin="5,0,0,5" VerticalAlignment="Bottom" Width="298" FontSize="14" Background="#FFC5FFFF" Click="bSearchAllProduct_Click"/>
-                    <Button x:Name="bSearchPromoProduct" Content="Акционный товар на складе" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="298" Click="button_Click" FontSize="14" Background="#FFC5FFFF"/>
+                    <Button x:Name="bSearchPromoProduct" Content="Акционный товар на складе" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="298" FontSize="14" Background="#FFC5FFFF" Click="bSearchPromoProduct_Click"/>
                     <TextBox x:Name="tbSearchProductName" HorizontalAlignment="Left" Height="34" Margin="380,0,0,0" TextWrapping="Wrap" Width="116" Text="наименование" FontSize="14" GotFocus="tbSearchProductName_GotFocus" VerticalAlignment="Top" />
                     <Button x:Name="bSearchProduct" Content="Поиск товара" HorizontalAlignment="Left" Height="34" Margin="657,0,0,0" VerticalAlignment="Top" Width="104" FontSize="14" Background="#FFC5FFFF" Click="button_Click"/>
                     <Label x:Name="lSearch1" Content="Для поиска определённого товара на складе введите" HorizontalAlignment="Left" Height="34" Margin="8,-2,0,0" VerticalAlignment="Top" Width="372" FontSize="14" Background="{x:Null}"/>
@@ -130,5 +122,6 @@
                 </Grid>
             </TabItem>
         </TabControl>
+        <Button x:Name="bClose" Content="Выйти" HorizontalAlignment="Left" Margin="690,10,0,0" VerticalAlignment="Top" Width="86" Height="31" Click="bClose_Click"/>
     </Grid>
 </Window>

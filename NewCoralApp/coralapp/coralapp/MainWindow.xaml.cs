@@ -11,6 +11,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Data.OleDb;
+using Microsoft.Win32;
+using System.Windows.Data;
 
 namespace coralapp
 {
@@ -52,6 +54,22 @@ namespace coralapp
             {
                 case "tabSearch":
                     dgSearch.ItemsSource = allLedgers().DefaultView;
+                    dgSearch.Columns.Clear();
+                    Dictionary<string, string> columns = new Dictionary<string, string>();
+                    columns.Add("Наименование товара", "commodity_name");
+                    columns.Add("Код товара", "coralclub_id");
+                    columns.Add("Описание", "desc");
+                    columns.Add("Количество", "quantity");
+                    columns.Add("Срок годности", "expiration_date");
+                    columns.Add("Стоимость (в у.е.)", "price_value");
+                    columns.Add("Стоимость (в баллах)", "point_value");
+                    foreach (KeyValuePair<string, string> column in columns)
+                    {
+                        DataGridTextColumn c = new DataGridTextColumn();
+                        c.Header = column.Key;
+                        c.Binding = new Binding(string.Format("[{0}]", column.Value));
+                        dgSearch.Columns.Add(c);
+                    }
                     //Если имя вкладки = "TabSearch", то мы записали внутрь таблицы все товары со склада. 
                     break;
                 case "tabNew":
@@ -102,7 +120,22 @@ namespace coralapp
             DataTable commodityTable = new DataTable(); //Определили элемент как таблицу 
             adapter.Fill(commodityTable); //Заполнили логическую структуру (таблицу)
             dgSearch.ItemsSource = commodityTable.DefaultView; // Вернули default (оригинальные) данные в компонент data grid
-
+            dgSearch.Columns.Clear();
+            Dictionary<string, string> columns = new Dictionary<string, string>();
+            columns.Add("Наименование товара", "commodity_name");
+            columns.Add("Код товара", "coralclub_id");
+            columns.Add("Описание", "desc");
+            columns.Add("Количество", "quantity");
+            columns.Add("Срок годности", "expiration_date");
+            columns.Add("Стоимость (в у.е.)", "price_value");
+            columns.Add("Стоимость (в баллах)", "point_value");
+            foreach (KeyValuePair<string, string> column in columns)
+            {
+                DataGridTextColumn c = new DataGridTextColumn();
+                c.Header = column.Key;
+                c.Binding = new Binding(string.Format("[{0}]", column.Value));
+                dgSearch.Columns.Add(c);
+            }
         }
 
         private DataTable allLedgers() {
@@ -122,6 +155,22 @@ namespace coralapp
             //Метод для поиска остатков ВСЕХ товаров на складе по нажатии на кнопку
         {
             dgSearch.ItemsSource = allLedgers().DefaultView;
+            dgSearch.Columns.Clear();
+            Dictionary<string, string> columns = new Dictionary<string, string>();
+            columns.Add("Наименование товара", "commodity_name");
+            columns.Add("Код товара", "coralclub_id");
+            columns.Add("Описание", "desc");
+            columns.Add("Количество", "quantity");
+            columns.Add("Срок годности", "expiration_date");
+            columns.Add("Стоимость (в у.е.)", "price_value");
+            columns.Add("Стоимость (в баллах)", "point_value");
+            foreach (KeyValuePair<string, string> column in columns)
+            {
+                DataGridTextColumn c = new DataGridTextColumn();
+                c.Header = column.Key;
+                c.Binding = new Binding(string.Format("[{0}]", column.Value));
+                dgSearch.Columns.Add(c);
+            }
         }
 
         private void bNewAddInTable_Click(object sender, RoutedEventArgs e)
@@ -203,7 +252,7 @@ namespace coralapp
             foreach (Product p in this.newProducts) {
                 if (p.quantity > 0)
                 {
-                    addNewSupplyDB(p.priceid, p.quantity);
+                    addNewSupplyDB(p.priceid, p.quantity, p.expirationdate);
                 }
             }
 
@@ -211,6 +260,9 @@ namespace coralapp
             cbNewProductCode.SelectedIndex = -1;
             cbNewProductName.SelectedIndex = -1;
             tbNewProductQuantity.Text = "0";
+            DataTable priceList = getPriceList(); //Забрали данные из БД. Реализацию см. ниже
+            cbNewProductName.ItemsSource = priceList.DefaultView;
+            cbNewProductCode.ItemsSource = priceList.DefaultView;
         }
 
         private DataTable getPriceList() {
@@ -252,7 +304,7 @@ namespace coralapp
         }
 
         
-private void addNewSupplyDB(int priceId, int quantity) {
+private void addNewSupplyDB(int priceId, int quantity, string expiration) {
    try
    {
                 if (this.connection.State != ConnectionState.Open)
@@ -267,8 +319,12 @@ private void addNewSupplyDB(int priceId, int quantity) {
                     SqlParameter pQuantity = new SqlParameter("@quantity", SqlDbType.Int);
                     pQuantity.Value = quantity;
 
+                    SqlParameter pExpiration = new SqlParameter("@expiration", SqlDbType.Date);
+                    pExpiration.Value = expiration;
+
                     cmd.Parameters.Add(pPriceId);
                     cmd.Parameters.Add(pQuantity);
+                    cmd.Parameters.Add(pExpiration);
                     cmd.ExecuteNonQuery();
                 }
 
@@ -626,6 +682,9 @@ private void addNewSupplyDB(int priceId, int quantity) {
             cbSaleProductCode.SelectedIndex = -1;
             cbSaleProductName.SelectedIndex = -1;
             tbSaleProductQuantity.Text = "0";
+            DataTable saleList = getAvailableCommodityList(); //Забрали данные из БД. Реализацию см. ниже
+            cbSaleProductName.ItemsSource = saleList.DefaultView;
+            cbSaleProductCode.ItemsSource = saleList.DefaultView;
         }
 
         private double prediction()
@@ -757,14 +816,15 @@ private void addNewSupplyDB(int priceId, int quantity) {
 
         }
 
-        private string GetConnectionString()
+        private string GetConnectionString(string filePath)
         {
             Dictionary<string, string> props = new Dictionary<string, string>();
 
             // XLSX - Excel 2007, 2010, 2012, 2013
             props["Provider"] = "Microsoft.ACE.OLEDB.12.0;";
             props["Extended Properties"] = "Excel 12.0 XML";
-            props["Data Source"] = "C:\\Users\\xkirax\\Google Диск\\Полина\\БД товаров.xlsx";
+            //props["Data Source"] = "C:\\Users\\xkirax\\Google Диск\\Полина\\БД товаров.xlsx";
+            props["Data Source"] = filePath;
 
             // XLS - Excel 2003 and Older
             //props["Provider"] = "Microsoft.Jet.OLEDB.4.0";
@@ -784,9 +844,10 @@ private void addNewSupplyDB(int priceId, int quantity) {
             return sb.ToString();
         }
 
-        private DataTable ReadExcelFile()
+        private DataTable ReadExcelFile(string filePath)
         {
-            string connectionString = GetConnectionString();
+            
+            string connectionString = GetConnectionString(filePath);
 
             using (OleDbConnection conn = new OleDbConnection(connectionString))
             {
@@ -858,7 +919,28 @@ private void addNewSupplyDB(int priceId, int quantity) {
 
         private void bNewUploadFromExcel_Click(object sender, RoutedEventArgs e)
         {
-            DataTable excel = ReadExcelFile();
+            // Create an instance of the open file dialog box.
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            // Set filter options and filter index.
+            openFileDialog1.Filter = "Excel Files (.xlsx)|*.xlsx";
+            openFileDialog1.FilterIndex = 1;
+
+            // Call the ShowDialog method to show the dialog box.
+            bool? userClickedOK = openFileDialog1.ShowDialog();
+
+            // Process input if the user clicked OK.
+            string fileName = "";
+            if (userClickedOK == true)
+            {
+                // Open the selected file to read.
+                fileName = openFileDialog1.FileName;
+            }
+            else {
+                MessageBox.Show("Не выбран файл с исходными данными");
+                return;
+            }
+            DataTable excel = ReadExcelFile(fileName);
             this.newProducts = new ObservableCollection<Product>();
             foreach (DataRow row in excel.Rows)
             {
@@ -880,6 +962,47 @@ private void addNewSupplyDB(int priceId, int quantity) {
             }
             dgNew.ItemsSource = this.newProducts;
     }
+
+        private void bSearchPromoProduct_Click(object sender, RoutedEventArgs e)
+        {
+            dgSearch.ItemsSource = productsOnSale().DefaultView;
+            dgSearch.Columns.Clear();
+            Dictionary<string, string> columns = new Dictionary<string, string>();
+            columns.Add("Наименование товара", "commodity_name");
+            columns.Add("Код товара", "coralclub_id");
+            columns.Add("Описание", "desc");
+            columns.Add("Количество", "quantity");
+            columns.Add("Срок годности", "expiration_date");
+            columns.Add("Стоимость (в у.е.)", "price_value");
+            columns.Add("Стоимость (в баллах)", "point_value");
+            columns.Add("Тип акции", "sale_type");
+            foreach (KeyValuePair<string, string> column in columns)
+            {
+                DataGridTextColumn c = new DataGridTextColumn();
+                c.Header = column.Key;
+                c.Binding = new Binding(string.Format("[{0}]", column.Value));
+                dgSearch.Columns.Add(c);
+            }
+        }
+
+        private DataTable productsOnSale() {
+            String SQL = "Select * FROM [ProductsOnSale]";
+
+            SqlCommand command = new SqlCommand(SQL, this.connection);
+            SqlDataAdapter adapter = new SqlDataAdapter(command);
+            if (connection.State != ConnectionState.Open)
+            { connection.Open(); } //Если соединение не открыто еще, то мы его открываем
+            DataTable salesTable = new DataTable();
+            adapter.Fill(salesTable);
+            return salesTable;
+        }
+
+        private void bClose_Click(object sender, RoutedEventArgs e)
+        {
+            Window1 loginWindow = new Window1();
+            loginWindow.Show(); //то открываем главное окно
+            this.Close(); //И закрываем текущее
+        }
     }
 
 
@@ -912,10 +1035,10 @@ private void addNewSupplyDB(int priceId, int quantity) {
                         result = "Код не может быть пустым";
                         return result;
                     }
-                    string st = @"^[A-Z]{2}[0-9]{1,6}$";
+                    string st = @"^[0-9]*$";
                     if (!Regex.IsMatch(Name, st)) //Если вводимая строка не соотв.регулярному выражению, то 
                     {
-                        result = "Код не соответствует шаблону XX000000";
+                        result = "Код может содержать только цифры";
                         return result;
                     }
                 }
@@ -1036,7 +1159,6 @@ private void addNewSupplyDB(int priceId, int quantity) {
             this.origOnSale3 = origOnSale3;
             this.origWithoutSale = origWithoutSale;
             this.ledger = ledger;
-            Console.WriteLine(ledger);
         }
 
         public Product(Product prod) {
