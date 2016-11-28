@@ -122,6 +122,6 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button x:Name="bClose" Content="Выйти" HorizontalAlignment="Left" Margin="690,10,0,0" VerticalAlignment="Top" Width="86" Height="31" Click="bClose_Click"/>
+        <Button x:Name="bClose" Content="Выйти" HorizontalAlignment="Right" Height="34" Margin="0,15,13,0" VerticalAlignment="Top" Width="91" FontSize="14" Background="White" Click="bClose_Click"/>
     </Grid>
 </Window>

@@ -27,7 +27,7 @@ namespace coralapp
         private void bClose_Click(object sender, RoutedEventArgs e)
         {
             Window1 loginWindow = new Window1();
-            loginWindow.Show(); //то открываем главное окно
+            loginWindow.Show(); // открываем главное окно
             this.Close(); //И закрываем текущее
         }
     }
