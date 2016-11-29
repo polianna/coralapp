@@ -53,7 +53,7 @@ namespace coralapp
             try
             {
                 client.Send(msg);
-                return "Вам было выслано письмо";
+                return "Письмо отправлено";
             }
             catch (Exception ex) //ловим ошибку
             {
