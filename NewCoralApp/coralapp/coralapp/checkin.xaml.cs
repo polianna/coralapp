@@ -64,5 +64,11 @@ namespace coralapp
                 msg.Dispose(); //удаляем объект нашего письма
             }
         }
+
+        private void tbEmail_GotFocus(object sender, RoutedEventArgs e)
+        //Метод для очистки окна при нажатии на text box
+        {
+            tbEmail.Clear();
+        }
     }
 }

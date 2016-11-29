@@ -10,10 +10,12 @@
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="White" Offset="1"/>
-                <GradientStop Color="#FFC500FF"/>
+                <GradientStop Color="#FFC5FFFF"/>
             </LinearGradientBrush>
         </Grid.Background>
-        <Label x:Name="label" Content="Для того, чтобы зарегестрироваться, &#xA;обратитесь к администратору проекта. &#xA;e-mail: coralappmail@gmail.com" Margin="15,15,10,10" FontFamily="Comic Sans MS" FontSize="16" BorderThickness="0" AutomationProperties.IsColumnHeader="True" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Button x:Name="button" Content="Написать" HorizontalAlignment="Left" Margin="307,141,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
+        <Label x:Name="label" Content="Для регистрации обратитесь к администратору.&#xA;Напишите ему на e-mail: coralappmail@gmail.com" Margin="10,16,10,106" FontFamily="Comic Sans MS" FontSize="14" BorderThickness="0" AutomationProperties.IsColumnHeader="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="365" Height="49"/>
+        <Button x:Name="button" Content="Отправить заявку" Height="28" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="125" FontSize="14" Background="#FFC5FFFF" HorizontalAlignment="Right" Click="button_Click"/>
+        <TextBox x:Name="tbEmail" HorizontalAlignment="Left" Height="28" Margin="5,0,0,5" TextWrapping="Wrap" Text="Введите e-mail" VerticalAlignment="Bottom" Width="239" FontFamily="Comic Sans MS" TextAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" GotFocus="tbEmail_GotFocus"/>
+        <Label x:Name="label_Copy" Content="Или введите ваш e-mail и нажмите на кнопку. &#xD;&#xA;В скорое время с вами свяжутся." Margin="10,35,10,10" FontFamily="Comic Sans MS" FontSize="14" BorderThickness="0" AutomationProperties.IsColumnHeader="True" HorizontalAlignment="Center" VerticalAlignment="Center" Height="57" Width="365"/>
     </Grid>
 </Window>
