@@ -140,18 +140,19 @@ namespace coralapp
                 if (isLogin) //если пароль совпадает с паролем из БД
                 {
                     switch (userRole)
+                        //в зависимости от роли
                     {
                         case "Administrator":
                             Admin admin = new Admin();
-                            admin.Show(); //то открываем главное окно
+                            admin.Show(); //то открываем окно для администратора
                             break;
                         case "Sale":
                             MainWindow mainWindow = new MainWindow();
-                            mainWindow.Show(); //то открываем главное окно
+                            mainWindow.Show(); //то открываем окно для продавца
                             break;
                         case "Manager":
                             manager managerWindow = new manager();
-                            managerWindow.Show(); //то открываем главное окно
+                            managerWindow.Show(); //то открываем окно для руководителя
                             break;
                     }
                     this.Close(); //И закрываем текущее

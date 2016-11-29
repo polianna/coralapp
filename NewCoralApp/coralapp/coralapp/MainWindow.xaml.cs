@@ -225,12 +225,12 @@ namespace coralapp
                 expirationdate = DateTime.Today.ToShortDateString();
             }
             else expirationdate = dpExpirationDate.Text; //Присваеваем переменной отвечающей за срок годность дату, выбранную пользователем в календаре 
-            DateTime expDate = DateTime.ParseExact(expirationdate, "dd.MM.yyyy",
-                                       System.Globalization.CultureInfo.InvariantCulture);
-            if (expDate<DateTime.Today.Date) {
-                MessageBox.Show("Срок годности не может быть меньше текущей даты");
-                expirationdate = DateTime.Today.ToShortDateString();
-            }
+            //DateTime expDate = DateTime.ParseExact(expirationdate, "dd.MM.yyyy",
+             //                          System.Globalization.CultureInfo.InvariantCulture);
+            //if (expDate<DateTime.Today.Date) {
+              //  MessageBox.Show("Срок годности не может быть меньше текущей даты");
+                //expirationdate = DateTime.Today.ToShortDateString();
+           // }
 
             int priceid = -1; //Вспомогательная переменная для добавления товара в БД
 

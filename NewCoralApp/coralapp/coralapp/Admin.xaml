@@ -16,10 +16,10 @@
         <TabControl x:Name="tabControl" Grid.Row="1" Margin="0,0,5,10" Background="White" SelectionChanged="tabControl_SelectionChanged">
             <TabItem x:Name="tabLogs" Header="Журнал учёта событий" Background="White" FontFamily="Comic Sans MS">
                 <Grid Background="White" Margin="0,12,0,0">
-                    <Label x:Name="lUserName" Content="Пользователь" HorizontalAlignment="Left" Height="34" Margin="74,0,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
-                    <ComboBox x:Name="cbUserName" HorizontalAlignment="Left" Height="34" Margin="189,0,0,0" VerticalAlignment="Top" Width="154" TextSearch.TextPath="username" DisplayMemberPath="username" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding username}" SelectionChanged="cbUserName_SelectionChanged" />
-                    <Button x:Name="bAllLog" Content="Снять фильтр" HorizontalAlignment="Left" Height="34" Margin="597,38,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bAllLog_Click"/>
-                    <Button x:Name="bFilterLog" Content="Отфильтровать" HorizontalAlignment="Left" Height="34" Margin="597,0,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bFilterLog_Click"/>
+                    <Label x:Name="lUserName" Content="Пользователь" HorizontalAlignment="Left" Height="34" Margin="10,-3,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
+                    <ComboBox x:Name="cbUserName" HorizontalAlignment="Left" Height="34" Margin="125,0,0,0" VerticalAlignment="Top" Width="178" TextSearch.TextPath="username" DisplayMemberPath="username" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding username}" SelectionChanged="cbUserName_SelectionChanged" />
+                    <Button x:Name="bAllLog" Content="Снять фильтр" HorizontalAlignment="Left" Height="34" Margin="308,39,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bAllLog_Click"/>
+                    <Button x:Name="bFilterLog" Content="Отфильтровать" HorizontalAlignment="Left" Height="34" Margin="308,0,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bFilterLog_Click"/>
                     <DataGrid x:Name="dgLog" Margin="5,80,5,10" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn IsReadOnly = "True" Binding="{Binding insertdate}" Header="Дата события" Width="120"/>
@@ -27,23 +27,23 @@
                             <DataGridTextColumn IsReadOnly = "True" Binding="{Binding logtext}" Header="Событие" Width="300"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Label x:Name="lFromDate" Content="c" HorizontalAlignment="Left" Height="34" Margin="386,2,0,0" VerticalAlignment="Top" Width="25" FontSize="14" RenderTransformOrigin="0.266,0.326"/>
-                    <DatePicker x:Name="dpFromDate" HorizontalAlignment="Left" Margin="428,0,0,0" VerticalAlignment="Top" Width="112" FirstDayOfWeek="Monday" Height="31"/>
-                    <Label x:Name="lToDate" Content="по" HorizontalAlignment="Left" Height="34" Margin="382,41,0,0" VerticalAlignment="Top" Width="29" FontSize="14" RenderTransformOrigin="-1.293,1.705"/>
-                    <DatePicker x:Name="dpToDate" HorizontalAlignment="Left" Margin="428,43,0,0" VerticalAlignment="Top" Width="112" FirstDayOfWeek="Monday" Height="31"/>
+                    <Label x:Name="lFromDate" Content="c" HorizontalAlignment="Left" Height="34" Margin="10,35,0,0" VerticalAlignment="Top" Width="25" FontSize="14" RenderTransformOrigin="0.266,0.326"/>
+                    <DatePicker x:Name="dpFromDate" HorizontalAlignment="Left" Margin="40,38,0,0" VerticalAlignment="Top" Width="112" FirstDayOfWeek="Monday" Height="34"/>
+                    <Label x:Name="lToDate" Content="по" HorizontalAlignment="Left" Height="34" Margin="157,35,0,0" VerticalAlignment="Top" Width="29" FontSize="14" RenderTransformOrigin="-1.293,1.705"/>
+                    <DatePicker x:Name="dpToDate" HorizontalAlignment="Left" Margin="191,38,0,0" VerticalAlignment="Top" Width="112" FirstDayOfWeek="Monday" Height="34"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabUsers" Header="Управление пользователями" Background="White" FontFamily="Comic Sans MS">
                 <Grid Background="White" Margin="0,12,0,0">
-                    <Label x:Name="lName" Content="Пользователь" HorizontalAlignment="Left" Height="34" Margin="20,0,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
-                    <TextBox x:Name="tbUserName" HorizontalAlignment="Left" Height="23" Margin="135,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-                    <Label x:Name="lPassword" Content="Пароль" HorizontalAlignment="Left" Margin="20,39,0,0" VerticalAlignment="Top"/>
-                    <Label x:Name="lActive" Content="Активный" HorizontalAlignment="Left" Margin="276,-5,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.731,0.344"/>
-                    <TextBox x:Name="tbDescription" HorizontalAlignment="Left" Height="23" Margin="349,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-                    <Label x:Name="lDescription" Content="Описание" HorizontalAlignment="Left" Margin="276,39,0,0" VerticalAlignment="Top"/>
-                    <Label x:Name="lRole" Content="Роль" HorizontalAlignment="Left" Margin="20,75,0,0" VerticalAlignment="Top"/>
-                    <ComboBox x:Name="cbRole" HorizontalAlignment="Left" Margin="135,79,0,0" VerticalAlignment="Top" Width="120" TextSearch.TextPath="role_name" IsTextSearchEnabled="True" IsEditable="True" IsSynchronizedWithCurrentItem="True" SelectionChanged="cbRole_SelectionChanged"/>
-                    <DataGrid x:Name="dgUser" Margin="5,107,5,10" AutoGenerateColumns="False" SelectionChanged="dgUser_SelectionChanged">
+                    <Label x:Name="lName" Content="Пользователь" HorizontalAlignment="Left" Height="34" Margin="10,0,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
+                    <TextBox x:Name="tbUserName" HorizontalAlignment="Left" Height="34" Margin="125,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="lPassword" Content="Пароль" HorizontalAlignment="Left" Margin="10,39,0,0" VerticalAlignment="Top" FontSize="14"/>
+                    <Label x:Name="lActive" Content="Активный" HorizontalAlignment="Left" Margin="250,0,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.731,0.344" FontSize="14"/>
+                    <TextBox x:Name="tbDescription" HorizontalAlignment="Left" Height="34" Margin="456,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="lDescription" Content="Описание" HorizontalAlignment="Left" Margin="373,0,0,0" VerticalAlignment="Top" FontSize="14"/>
+                    <Label x:Name="lRole" Content="Роль" HorizontalAlignment="Left" Margin="250,39,0,0" VerticalAlignment="Top" FontSize="14"/>
+                    <ComboBox x:Name="cbRole" HorizontalAlignment="Left" Margin="297,39,0,0" VerticalAlignment="Top" Width="120" Height="34" TextSearch.TextPath="role_name" IsTextSearchEnabled="True" IsEditable="True" IsSynchronizedWithCurrentItem="True" SelectionChanged="cbRole_SelectionChanged"/>
+                    <DataGrid x:Name="dgUser" Margin="5,78,5,10" AutoGenerateColumns="False" SelectionChanged="dgUser_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn IsReadOnly = "True" Binding="{Binding username}" Header="Пользователь" Width="120"/>
                             <DataGridTextColumn IsReadOnly = "True" Binding="{Binding isactive}" Header="Активный" Width="70"/>
@@ -55,30 +55,30 @@
                             <DataGridTextColumn IsReadOnly = "True" Binding="{Binding updatedate}" Header="Обновлен" Width="120"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Button x:Name="bSaveUser" Content="Сохранить" HorizontalAlignment="Left" Height="34" Margin="551,0,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bSaveUser_Click" />
-                    <Button x:Name="bCancelUser" Content="Отменить" HorizontalAlignment="Left" Height="34" Margin="551,44,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bCancelUser_Click" />
-                    <PasswordBox x:Name="pbPassword" HorizontalAlignment="Left" Margin="135,39,0,0" VerticalAlignment="Top" Width="120"/>
-                    <CheckBox x:Name="cbActive" Content="Да" HorizontalAlignment="Left" Margin="349,0,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="bSaveUser" Content="Сохранить" HorizontalAlignment="Left" Height="34" Margin="581,0,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bSaveUser_Click" />
+                    <Button x:Name="bCancelUser" Content="Отменить" HorizontalAlignment="Left" Height="34" Margin="581,39,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bCancelUser_Click" />
+                    <PasswordBox x:Name="pbPassword" HorizontalAlignment="Left" Margin="125,39,0,0" VerticalAlignment="Top" Width="120" Height="34"/>
+                    <CheckBox x:Name="cbActive" Content="Да" HorizontalAlignment="Left" Margin="333,5,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="1.729,3.875"/>
 
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabDb" Header="Изменение данных в базе данных" Background="White" FontFamily="Comic Sans MS">
                 <Grid Background="White" Margin="0,12,0,0">
                     <Label x:Name="lTableName" Content="Таблица" HorizontalAlignment="Left" Height="34" Margin="5,0,0,0" VerticalAlignment="Top" Width="110" FontSize="14"/>
-                    <ComboBox x:Name="cbTableName" HorizontalAlignment="Left" Height="34" Margin="120,0,0,0" VerticalAlignment="Top" Width="202" TextSearch.TextPath="table_name" DisplayMemberPath="table_name" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding table_name}" SelectionChanged="cbTableName_SelectionChanged" />
+                    <ComboBox x:Name="cbTableName" HorizontalAlignment="Left" Height="34" Margin="120,0,0,0" VerticalAlignment="Top" Width="296" TextSearch.TextPath="table_name" DisplayMemberPath="table_name" IsTextSearchEnabled="True" IsEditable="True" ItemsSource="{Binding}" SelectedValue="{Binding table_name}" SelectionChanged="cbTableName_SelectionChanged" />
                     <Label x:Name="lSQLText" Content="SQL Запрос" HorizontalAlignment="Left" Height="34" Margin="5,46,0,0" VerticalAlignment="Top" Width="110" FontSize="14" RenderTransformOrigin="0.501,2.122"/>
                     <TextBox x:Name="tbSQLText" HorizontalAlignment="Left" Margin="120,53,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="68" Width="457"/>
 
-                    <Button x:Name="bTableView" Content="Просмотр таблицы" HorizontalAlignment="Left" Height="34" Margin="597,0,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bTableView_Click" />
-                    <Button x:Name="bSQLExec" Content="Выполнить SQL" HorizontalAlignment="Left" Height="34" Margin="597,53,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bSQLExec_Click" />
+                    <Button x:Name="bTableView" Content="Просмотр таблицы" HorizontalAlignment="Left" Height="34" Margin="421,0,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bTableView_Click" />
+                    <Button x:Name="bSQLExec" Content="Выполнить SQL" HorizontalAlignment="Left" Height="34" Margin="582,87,0,0" VerticalAlignment="Top" Width="156" FontSize="14" Background="#FFC5FFFF" Click="bSQLExec_Click" />
 
                     <DataGrid x:Name="dgTable" Margin="5,126,5,46" AutoGenerateColumns="True"/>
-                    <Button x:Name="bSave" Content="Сохранить" HorizontalAlignment="Left" Height="34" Margin="482,404,0,0" VerticalAlignment="Top" Width="131" FontSize="14" Background="#FFC5FFFF" IsEnabled="False" Click="bSave_Click" />
-                    <Button x:Name="bCancel" Content="Отменить" HorizontalAlignment="Left" Height="34" Margin="634,404,0,0" VerticalAlignment="Top" Width="131" FontSize="14" Background="#FFC5FFFF" IsEnabled="False" Click="bCancel_Click" />
+                    <Button x:Name="bSave" Content="Сохранить" HorizontalAlignment="Right" Height="34" Margin="0,0,5,5" VerticalAlignment="Bottom" Width="131" FontSize="14" Background="#FFC5FFFF" IsEnabled="False" Click="bSave_Click" />
+                    <Button x:Name="bCancel" Content="Отменить" HorizontalAlignment="Right" Height="34" Margin="0,0,150,5" VerticalAlignment="Bottom" Width="131" FontSize="14" Background="#FFC5FFFF" IsEnabled="False" Click="bCancel_Click" />
 
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button x:Name="bClose" Content="Выйти" HorizontalAlignment="Left" Margin="690,10,0,0" VerticalAlignment="Top" Width="86" Height="31" Click="bClose_Click"/>
+        <Button x:Name="bClose" Content="Выйти" HorizontalAlignment="Right" Height="34" Margin="0,15,13,0" VerticalAlignment="Top" Width="91" FontSize="14" Background="White" Click="bClose_Click"/>
     </Grid>
 </Window>
