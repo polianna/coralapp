@@ -28,7 +28,7 @@ namespace coralapp
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(sendit("coralappamail@gmail.com", "Заявка на регистрацию","Необходимо зарегистрировать пользователя "+tbEmail.Text));
+            MessageBox.Show(sendit("coralappmail@gmail.com", "Заявка на регистрацию","Необходимо зарегистрировать пользователя "+tbEmail.Text));
         }
 
         public string sendit(string ReciverMail, string subject, string message)
