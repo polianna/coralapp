@@ -28,7 +28,7 @@ namespace coralapp
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(sendit("polina.kraskova@gmail.com","Тест","Тест"));
+            MessageBox.Show(sendit("coralappamail@gmail.com", "Заявка на регистрацию","Необходимо зарегистрировать пользователя "+tbEmail.Text));
         }
 
         public string sendit(string ReciverMail, string subject, string message)
@@ -53,11 +53,11 @@ namespace coralapp
             try
             {
                 client.Send(msg);
-                return "Mail has been successfully sent!";
+                return "Вам было выслано письмо";
             }
             catch (Exception ex) //ловим ошибку
             {
-                return "Fail Has error" + ex.Message;
+                return ex.Message;
             }
             finally
             {
