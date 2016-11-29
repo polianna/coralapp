@@ -858,18 +858,21 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
                         prod_prev.quantity -= prod_prev.onSale1; //вычли из старого общего количества кол-во проданное по 1 акции (старые данные)
                         prod_prev.quantity += results[0] + results[1]; //и прибавили кол-во товара проданное по акции и без акции
                         if (prod_prev.quantity > prod_prev.ledger)
+                            //если количество "Итого", которое мы хотим продать больше остатков на складе
                         {
-                            prod_prev.quantity = prev_value;
+                            //то выдаем пользователю ошибку и откатываем все изменения
+                            prod_prev.quantity = prev_value; 
                             MessageBox.Show("Недостаточно товара на складе. Всего доступно товара - " + prod_prev.ledger);
                             e.Cancel = true; //откат изменений
                             (sender as DataGrid).CancelEdit();
                             return;
                         }
-                        prod_prev.onSale1 = results[0];
-                        prod_prev.withoutSale += results[1];
+                        prod_prev.onSale1 = results[0]; //присваиваем кол-ву проданных товаров по акции 1 новое значение
+                        prod_prev.withoutSale += results[1]; //прибавляем к кол-ву проданные товаров без акции новое значение
 
-                        break;
+                        break; //прекращаем выполнение switch
                     case "По акции 2":
+                        //в случае 2 акции производим действия, аналогичные действиям в случае 1 акции
                         if (count_new > prod_prev.origOnSale2)
                         {
                             MessageBox.Show("Недостаточно товара на складе. Доступно товара по акции 2 - " + prod_prev.origOnSale2);
@@ -893,6 +896,7 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
                         prod_prev.withoutSale += results[1];
                         break;
                     case "По акции 3":
+                        //в случае 2 акции производим действия, аналогичные действиям в случае 1 акции
                         if (count_new > prod_prev.origOnSale3)
                         {
                             MessageBox.Show("Недостаточно товара на складе. Доступно товара по акции 3 - " + prod_prev.origOnSale3);
@@ -916,21 +920,29 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
                         prod_prev.withoutSale += results[1];
                         break;
                     case "Без акции":
-                        prev_value = prod_prev.quantity;
-                        prod_prev.quantity -= prod_prev.withoutSale;
-                        prod_prev.quantity += count_new;
+                        //в случае измения значения в ячейке, относящейся к столбцу "без акции"
+                        prev_value = prod_prev.quantity; //присваиваем вспомогательной переменной значение, которое было в ячейке "Итого" до изменений
+                        prod_prev.quantity -= prod_prev.withoutSale; //вычитам из ячейки "Итого" количество товара, которое мы раньше хотели продать без акции
+                        prod_prev.quantity += count_new; //вместо него прибавляем то количество, которое мы сейчас хотим продать без акции
                         if (prod_prev.quantity > prod_prev.ledger)
-                        {
+                            //если мы хотим продать товара больше, чем есть на складе
+                        { //то возвращаем в "итого" в таблицу предыдущее значение
                             prod_prev.quantity = prev_value;
+                            //выдаем сообщение об ошибке
                             MessageBox.Show("Недостаточно товара на складе. Всего доступно товара - " + prod_prev.ledger);
-                            e.Cancel = true;
+                            e.Cancel = true; //и откатываем все изменения
                             (sender as DataGrid).CancelEdit();
                             return;
                         }
-                        prod_prev.withoutSale = count_new;
+                        prod_prev.withoutSale = count_new; //присваиваем ячейке таблицы новое значения товара, продаваемого без акции
                         break;
                 }
-                e.Cancel = true;
+                e.Cancel = true; //мы все рассчитали для пользователя, выбрали новые значения 
+                //и теперь осталось отменить то значение, которое ввел пользователь
+                //оставив те значения, которые мы рассчитали на основе того,
+                //что он ввёл
+                //например, пользователь ввел в 1 акцию число 10. значит, рассчитаться должно так: по 1 акции мы реализуем 8 шт, без акции 2, 
+                //с помощью данного действия, мы отменяем введенное им 10, оставляя рассчитанные 8 и 2
                 (sender as DataGrid).CancelEdit();
             }
 
@@ -938,12 +950,12 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
 
         private string GetConnectionString(string filePath)
         {
+            //создаем структуру Dictionary с двумя параметрами: ключ и значение
             Dictionary<string, string> props = new Dictionary<string, string>();
-
+            //Определяем экзампляры коллекции
             // XLSX - Excel 2007, 2010, 2012, 2013
             props["Provider"] = "Microsoft.ACE.OLEDB.12.0;";
             props["Extended Properties"] = "Excel 12.0 XML";
-            //props["Data Source"] = "C:\\Users\\xkirax\\Google Диск\\Полина\\БД товаров.xlsx";
             props["Data Source"] = filePath;
 
             // XLS - Excel 2003 and Older
@@ -952,7 +964,9 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
             //props["Data Source"] = "C:\\MyExcel.xls";
 
             StringBuilder sb = new StringBuilder();
-
+            //объявляем "построитель строк".
+            //Для каждого экземпляра коллекции мы создаем строку, в которой
+            //берем ключ и присоединяем к нему значение 
             foreach (KeyValuePair<string, string> prop in props)
             {
                 sb.Append(prop.Key);
@@ -960,77 +974,91 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
                 sb.Append(prop.Value);
                 sb.Append(';');
             }
-
+            //после чего объединяем все строки, которые мы собрали при помощи "построителя строк"
             return sb.ToString();
         }
 
         private DataTable ReadExcelFile(string filePath)
+            //метод для получения данных в виде таблицы из excel файла
         {
             
             string connectionString = GetConnectionString(filePath);
 
             using (OleDbConnection conn = new OleDbConnection(connectionString))
+                //Ado.NET позволяет нам работать с офисом (в частности с excel файлами)
+                //как с бд. Здесь мы создали соединение.
             {
-                conn.Open();
-                OleDbCommand cmd = new OleDbCommand();
-                cmd.Connection = conn;
+                conn.Open(); //открываем соединение с "бд" - excel файлом
+                OleDbCommand cmd = new OleDbCommand(); //Создаем новый Ole запрос
+                cmd.Connection = conn; //для комманды установили соединение
 
                 // Get all Sheets in Excel File
+                //Получаем все листы из excel файл 
                 DataTable dtSheet = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 
                 // Loop through all Sheets to get data
+                //просмотриваем все листы для получения данных. Берем первую строку.
                 DataRow dr = dtSheet.Rows[0];
-                
-                    string sheetName = dr["TABLE_NAME"].ToString();
 
-                    // Get all rows from the Sheet
-                    cmd.CommandText = "SELECT * FROM [" + sheetName + "]";
+                string sheetName = dr["TABLE_NAME"].ToString();
+                // присваиваем нашей стороковой переменной sheetName - имя листа
 
-                    DataTable dt = new DataTable();
-                    dt.TableName = sheetName;
+                // Get all rows from the Sheet
+                //получаем все строки из листа при помощи комманды
+                cmd.CommandText = "SELECT * FROM [" + sheetName + "]";
 
-                    OleDbDataAdapter da = new OleDbDataAdapter(cmd);
-                    da.Fill(dt);
-                
+                DataTable dt = new DataTable();
+                //определяем элемент как таблицу
+                dt.TableName = sheetName; //присваваем нашей имени таблицы имя листа
 
-                cmd = null;
-                conn.Close();
-                return dt;
+                OleDbDataAdapter da = new OleDbDataAdapter(cmd);
+                //подготовили пакет к отправке
+                da.Fill(dt); //заполнили логическую структуру (таблицу)
+
+
+                cmd = null; //очистили переменную cmd
+                conn.Close(); //закрыли соединение
+                return dt; //вернули в качестве результата полученную таблицу
             }
             
         }
 
         private int getPriceId(string commodityName, double priceValue, double pointValue) {
+            //метод для получения идентификатора цены товара 
             try
             {
                 if (this.connection.State != ConnectionState.Open)
-                { this.connection.Open(); }
+                { this.connection.Open(); } //открываем соеденение с бд, если оно закрыто
                 using (SqlCommand cmd = new SqlCommand("SELECT dbo.getPriceId(@commodity_name,@price_value,@point_value)", this.connection))
-                {
-
+                { //создаем SQL комманду
+                    //определяем SQL параметр. Их значение и тип.
                     SqlParameter pCommodityName = new SqlParameter("@commodity_name", SqlDbType.NVarChar);
                     pCommodityName.Value = commodityName;
-
+                    //определяем SQL параметр. Их значение и тип.
                     SqlParameter pPriceValue = new SqlParameter("@price_value", SqlDbType.Real);
                     pPriceValue.Value = priceValue;
-
+                    //определяем SQL параметр. Их значение и тип.
                     SqlParameter pPointValue = new SqlParameter("@point_value", SqlDbType.Real);
                     pPointValue.Value = pointValue;
-
+                    //дабавляем вместо неизвестных параметров конкретные значения
                     cmd.Parameters.Add(pCommodityName);
                     cmd.Parameters.Add(pPriceValue);
                     cmd.Parameters.Add(pPointValue);
+                    //Для извлечения данных с помощью DataReader необходимо создать экземпляр объекта Command,
+                    //а затем создать объект DataReader, вызвав метод Command.ExecuteReader для получения строк из источника данных. 
                     SqlDataReader reader = cmd.ExecuteReader();
                     int price_id = -1;
                     while (reader.Read()) {
+                        //считали идентификатор цены 
                         price_id = Int32.Parse(reader[0].ToString());
                     }
-                    reader.Close();
+                    reader.Close(); //закрываем DataRead, чтобы открыть соединение для дальнейшей работы
                     return price_id;
                 }
 
             }
             catch (Exception ex)
+            //если возникла ошибка, выдаем сообщение об ошибке
             {
                 MessageBox.Show(ex.Message);
                 return -1;
@@ -1038,56 +1066,71 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
         }
 
         private void bNewUploadFromExcel_Click(object sender, RoutedEventArgs e)
+            //метод для загрузки в таблицу данных, полученных из excel файла
         {
             // Create an instance of the open file dialog box.
+            // СОздать экземпляр диалогового окна открытия файла
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-            // Set filter options and filter index.
+               //Устанавливаем опции и индекс для фильтра
             openFileDialog1.Filter = "Excel Files (.xlsx)|*.xlsx";
             openFileDialog1.FilterIndex = 1;
 
-            // Call the ShowDialog method to show the dialog box.
+            //Чтобы показать диалоговорое окно вызываем метод ShowDialog
             bool? userClickedOK = openFileDialog1.ShowDialog();
 
-            // Process input if the user clicked OK.
+            // Процесс вставки, если пользователь выбрал "Ок"
             string fileName = "";
             if (userClickedOK == true)
             {
-                // Open the selected file to read.
+                // Открываем выбранный файл для чтения
                 fileName = openFileDialog1.FileName;
             }
-            else {
+            else { 
+                //если пользователь не выбрал файл, выводится сообщение об ошибке
                 MessageBox.Show("Не выбран файл с исходными данными");
                 return;
             }
             DataTable excel = ReadExcelFile(fileName);
+            //в табличную структуру возвращаем результат работы метода ReadExcelFile
             this.newProducts = new ObservableCollection<Product>();
+            //Заполняем коллекцию данными, полученными из файла
+            //для каждой строки
             foreach (DataRow row in excel.Rows)
             {
                 int ledger = (int)((double)row["Остаток"]);
-                if (ledger > 0) {
+                if (ledger > 0) { //если остаток больше нуля
                     string commodity_name = (string)row["Наименование"];
                     string coralclub_code = ((double)row["Код"]).ToString();
                     double price_value = (double)row["Цена"];
                     double point_value = (double)row["Очки"];
                     string expiration_date = "27.11.2016";
                     int price_id = getPriceId(commodity_name,price_value,point_value);
+                    //возвращаем идентификатор цены при помощи метода getPriceId
                     if (price_id == -1) {
+                        //если идентификатор цены из файла не совпал с идентификатором цены в БД, то выводим сообщение об ошибке
                         MessageBox.Show(String.Format("Товар {0} с ценой {1} руб и {2} очков не найден в БД.\r\nНеобходимо сначала добавить товар.", commodity_name, price_value, point_value));
                     }
                     else {
+
+                        //если идентификаторы совпали добавляем в коллекцию новый товар
                         this.newProducts.Add(new Product(commodity_name, coralclub_code, ledger, price_id, expiration_date));
                     }
                 }
             }
-            dgNew.ItemsSource = this.newProducts;
+            dgNew.ItemsSource = this.newProducts; //заполняем таблицу данными из коллекции
     }
 
         private void bSearchPromoProduct_Click(object sender, RoutedEventArgs e)
+            //метод вывода в таблицу товаров, продающихся по акции
+            //при нажатии на кнопку "Акционный товар на складе" во вкладке "Что на складе?"
         {
             dgSearch.ItemsSource = productsOnSale().DefaultView;
-            dgSearch.Columns.Clear();
+            //заполняем таблицу остатками акционных товаров
+            dgSearch.Columns.Clear(); //стираем заголовки
+            //создаем структуру Dictionary
             Dictionary<string, string> columns = new Dictionary<string, string>();
+            //добавляем элементы в структуру
             columns.Add("Наименование товара", "commodity_name");
             columns.Add("Код товара", "coralclub_id");
             columns.Add("Описание", "desc");
@@ -1097,51 +1140,57 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
             columns.Add("Стоимость (в баллах)", "point_value");
             columns.Add("Тип акции", "sale_type");
             foreach (KeyValuePair<string, string> column in columns)
-            {
+            { //для каждого элемента структуры мы
                 DataGridTextColumn c = new DataGridTextColumn();
-                c.Header = column.Key;
+                c.Header = column.Key; //определяем заголовок как ключ колонки
                 c.Binding = new Binding(string.Format("[{0}]", column.Value));
-                dgSearch.Columns.Add(c);
+                //присваиваем связке ссылку на значение в бд
+                dgSearch.Columns.Add(c); //добавляем заголовки столбцов вместе со ссылками на бд в таблицу
             }
         }
 
         private DataTable productsOnSale() {
+            //метод для получания всех данных из представления (view) о товарах, которsе продаются по акции
             String SQL = "Select * FROM [ProductsOnSale]";
-
+            //создаем новуб sql комманду
             SqlCommand command = new SqlCommand(SQL, this.connection);
-            SqlDataAdapter adapter = new SqlDataAdapter(command);
+            SqlDataAdapter adapter = new SqlDataAdapter(command); //готовим пакет к отправке
             if (connection.State != ConnectionState.Open)
             { connection.Open(); } //Если соединение не открыто еще, то мы его открываем
-            DataTable salesTable = new DataTable();
-            adapter.Fill(salesTable);
-            return salesTable;
+            DataTable salesTable = new DataTable(); //определяем логическую структуру как таблицу
+            adapter.Fill(salesTable); //заполняем таблицу
+            return salesTable; //возвращаем полученные данные в виде таблицы
         }
 
         private void bClose_Click(object sender, RoutedEventArgs e)
+            //метод для перехода к форме входа в систему. срабатывает при нажатии на кнопку "Выход"
         {
             Window1 loginWindow = new Window1();
-            loginWindow.Show(); //то открываем главное окно
+            loginWindow.Show(); //открываем главное окно
             this.Close(); //И закрываем текущее
         }
 
         private void dgNew_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
+        { //метод для проверки измененных пользователем данных в ячейку таблицы во вкладке "Новые поступления"
             if (e.EditAction == DataGridEditAction.Commit)
+                //при изменении ячейки и нажатии на enter
             {
                 int count_new = 0;
                 Product prod_prev = (Product)e.Row.DataContext;
+                //считываем из таблицы строку
                 try
-                {
+                { //пытаемся присвоить переменной введенное пользователем количество товара
                     count_new = Int32.Parse((e.EditingElement as TextBox).Text);
                 }
                 catch (Exception exc)
                 {
+                    //если пользователь ввел не число, то присваиваем переменной значение ноль
                     count_new = 0;
                 }
 
-                prod_prev.quantity = count_new;
+                prod_prev.quantity = count_new; //записываем в ячейку новое значение (из переменной count_new)
 
-                e.Cancel = true;
+                e.Cancel = true; // отменяем число введенное пользователем, оставляя наше присвоенное значение
                 (sender as DataGrid).CancelEdit();
             }
         }
@@ -1152,6 +1201,7 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
 
 
     public class Commodity : IDataErrorInfo
+    //создаем класс Commodity
         
     {
 
@@ -1192,10 +1242,9 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
     }
 
     public class Product: INotifyPropertyChanged
+        //создаем класс Product
     {
-        //Создали класс с полями, ура, методы. счастье. Спасбо за внимание
 
-        //ПОЛИ-НА!!! :))
         public string name { get; set; }
         private int sale1;
         private int sale2;
@@ -1322,7 +1371,7 @@ private void addNewSupplyDB(int priceId, int quantity, string expiration) {
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void NotifyPropertyChanged(string propName)
-        {
+        {//вызывается, если свойство поменялось
             if (this.PropertyChanged != null)
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
